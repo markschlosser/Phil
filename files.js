@@ -300,13 +300,15 @@ function openFile(e) {
 }
 
 function convertJSONToPuzzle(puz) {
-  createNewPuzzle();
-  if (puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) {
-    new Notification("Oops. Can only open 15 x 15 puzzles.", 10);
-    return;
+  // createNewPuzzle();
+
+  if ((puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) &&
+      (puz.size.rows != DEFAULT_SUNDAY_SIZE || puz.size.cols != DEFAULT_SUNDAY_SIZE)) {
+    // new Notification("Warning, using non-standard grid sizes may cause problems with some features.", 10);
   }
-  xw.rows = DEFAULT_SIZE;
-  xw.cols = DEFAULT_SIZE;
+  createNewPuzzle(puz.size.rows, puz.size.cols);
+  // xw.rows = puz.size.rows;
+  // xw.cols = puz.size.cols;
   // Update puzzle title, author
   xw.title = puz.title || DEFAULT_TITLE;
   if (puz.title.slice(0,8).toUpperCase() == "NY TIMES") {
@@ -318,7 +320,7 @@ function convertJSONToPuzzle(puz) {
   for (let i = 0; i < xw.rows; i++) {
     new_fill.push("");
     for (let j = 0; j < xw.cols; j++) {
-      const k = (i * xw.rows) + j;
+      const k = (i * xw.cols) + j;
       new_fill[i] += (puz.grid[k].length > 1) ? puz.grid[k][0].toUpperCase() : puz.grid[k].toUpperCase(); // Strip rebus answers to their first letter
     }
   }

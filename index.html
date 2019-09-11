@@ -13,7 +13,16 @@
   </div>
 
   <div id="toolbar">
-    <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle()">
+    <div id="new-grid-menu" class="menu hidden" onmouseleave="hideMenu(event)">
+      <h4>New grid size:</h4>
+      <button id="new-grid-15" class="default" type="button" data-tooltip="15x15" onmouseup="setDefault(event)" onclick="createNewPuzzle(15,15)">
+        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="new-grid-21" type="button" data-tooltip="21x21" onmouseup="setDefault(event)" onclick="createNewPuzzle(3,4)">
+        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+      </button>
+    </div>
+    <button id="new-grid" type="button" data-tooltip="New puzzle" onmouseenter="showMenu(event)" onclick="doDefault(event)">
       <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
     </button>
     <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onmouseenter="showMenu(event)" onclick="openPuzzle()">

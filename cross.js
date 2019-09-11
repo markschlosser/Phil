@@ -33,6 +33,7 @@ const BLANK = " ";
 const ACROSS = "across";
 const DOWN = "down";
 const DEFAULT_SIZE = 15;
+const DEFAULT_SUNDAY_SIZE = 21;
 const DEFAULT_TITLE = "Untitled";
 const DEFAULT_AUTHOR = "Anonymous";
 const DEFAULT_CLUE = "(blank clue)";
@@ -267,9 +268,7 @@ class Interface {
   }
 }
 
-new Notification(document.getElementById("shortcuts").innerHTML, 300);
-// new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
-// new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
+// new Notification(document.getElementById("shortcuts").innerHTML, 300);
 
 let xw = new Crossword(); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
@@ -302,9 +301,9 @@ function createNewPuzzle(rows, cols) {
     "acrossWord": '',
     "downWord":   '',
     "acrossStartIndex":0,
-    "acrossEndIndex":  DEFAULT_SIZE,
+    "acrossEndIndex":  xw.rows,
     "downStartIndex":  0,
-    "downEndIndex":    DEFAULT_SIZE,
+    "downEndIndex":    xw.cols,
     "direction":  ACROSS
   };
 
@@ -434,9 +433,9 @@ function keyboardHandler(e) {
 }
 
 function updateUI() {
-  if (isMutated) {
-    autoFill(true);  // quick fill
-  }
+  // if (isMutated) {
+  //   autoFill(true);  // quick fill
+  // }
   updateGridUI();
   updateLabelsAndClues();
   updateActiveWords();
@@ -586,15 +585,18 @@ function updateActiveWords() {
 function getWordAt(row, col, direction, setCurrentWordIndices) {
   let text = "";
   let [start, end] = [0, 0];
+  let position = 0;
   if (direction == ACROSS) {
     text = xw.fill[row];
+    position = col;
   } else {
     for (let i = 0; i < xw.rows; i++) {
       text += xw.fill[i][col];
     }
+    position = row;
   }
   text = text.split(BLANK).join(DASH);
-  [start, end] = getWordIndices(text, (direction == ACROSS) ? col : row);
+  [start, end] = getWordIndices(text, direction, position);
   // Set global word indices if needed
   if (setCurrentWordIndices) {
     if (direction == ACROSS) {
@@ -606,11 +608,12 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
   return text.slice(start, end);
 }
 
-function getWordIndices(text, position) {
+function getWordIndices(text, direction, position) {
   let start = text.slice(0, position).lastIndexOf(BLACK);
   start = (start == -1) ? 0 : start + 1;
-  let end = text.slice(position, DEFAULT_SIZE).indexOf(BLACK);
-  end = (end == -1) ? DEFAULT_SIZE : Number(position) + end;
+  let limit = (direction == ACROSS) ? xw.cols : xw.rows;
+  let end = text.slice(position, limit).indexOf(BLACK);
+  end = (end == -1) ? limit : Number(position) + end;
   return [start, end];
 }
 
