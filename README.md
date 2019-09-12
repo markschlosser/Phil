@@ -8,38 +8,34 @@ Phil helps you make crosswords, using client-side JavaScript.
 * Print to PDF.
 * Create a New York Times submission in seconds.
 
+New to this fork:
+* [Bob Copeland's](https://github.com/bcopeland) pure JS auto filler
+* NYT Sunday grid (21×21) support
+
+TODO:
+* Arbitrary (rectangular) grid size input
+* Cross-checked fill suggestions
+* Rebus support
+* Stats
+* Autofill region
+
 ## Related repositories
 
 Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and [jsPDF](https://github.com/MrRio/jsPDF/) (along with [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/)) for generating PDFs.
 
-The Phil solving engine (in progress) uses the [Glucose](http://www.labri.fr/perso/lsimon/glucose/) 3.0 SAT solver. The sources (with our modifications) are in the [third_party](third_party) directory.
-
 ## Getting started
 
-To use Phil:
+To use this fork:
 
-1. Go to [keiranking.com/phil](http://www.keiranking.com/phil).
+1. Go to https://jmviz.github.io/Phil/.
 
-To run your own copy of Phil:
+To run this fork locally:
 
-1. Install a working [Emscripten](http://kripken.github.io/emscripten-site/) environment. On Mac, using [homebrew](http://braumeister.org/formula/emscripten) is a good choice.
+1. Clone this repository.
 
-2. From the command line, run:
+2. Enter the Phil directory.
 
-   ```
-   cd third_party/glucose-3.0/simp
-   make xwsolve.js
-   ```
-
-   At this point, `xwsolve.js` and `xwsolve.wasm` should be generated.
-
-3. Go back to the Phil main directory (`cd ../../..`) and create symbolic links (aliases):
-
-   ```
-   ln -s third_party/glucose-3.0/simp/xwsolve.* .
-   ```
-
-4. Run a local webserver. If you have Python 3 installed, then:
+3. Run a local webserver. If you have Python 3 installed, then:
 
    ```
    python3 -m http.server 8000
@@ -51,13 +47,15 @@ To run your own copy of Phil:
    python -m SimpleHTTPServer 8000
    ```
 
-5. Point your browser to [localhost:8000](http://localhost:8000).
+4. Point your browser to [localhost:8000](http://localhost:8000).
 
 ## Crossword resources
 
-* [Wordlists](http://www.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
-* [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
 * [OneLook](http://onelook.com/) and [Crossword Tracker](http://crosswordtracker.com/) search engines
+* [XWord Info](https://www.xwordinfo.com) (some features require membership)
+* [Collected wordlists](http://wiki.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start) of the National Puzzler's League
+* [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
+
 
 ## License
 Licensed under [the Apache License, v2.0](http://www.apache.org/licenses/LICENSE-2.0) (the 'License').
@@ -66,4 +64,4 @@ Unless required by law or agreed in writing, software distributed under the Lice
 is distributed on an **'as is' basis, without warranties or conditions**, express or implied.
 See the [License](LICENSE.txt) for the specific language governing permissions and limitations.
 
-&copy; Keiran King
+Original [Phil](https://github.com/keiranking/Phil) Copyright &copy; 2017 [Keiran King](https://github.com/keiranking).

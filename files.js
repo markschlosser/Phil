@@ -300,15 +300,11 @@ function openFile(e) {
 }
 
 function convertJSONToPuzzle(puz) {
-  // createNewPuzzle();
-
-  if ((puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) &&
-      (puz.size.rows != DEFAULT_SUNDAY_SIZE || puz.size.cols != DEFAULT_SUNDAY_SIZE)) {
+  if ((puz.size.rows != puz.size.cols) ||
+      (puz.size.rows != DEFAULT_SIZE && puz.size.rows != DEFAULT_SUNDAY_SIZE)) {
     // new Notification("Warning, using non-standard grid sizes may cause problems with some features.", 10);
   }
   createNewPuzzle(puz.size.rows, puz.size.cols);
-  // xw.rows = puz.size.rows;
-  // xw.cols = puz.size.cols;
   // Update puzzle title, author
   xw.title = puz.title || DEFAULT_TITLE;
   if (puz.title.slice(0,8).toUpperCase() == "NY TIMES") {
@@ -410,14 +406,47 @@ function convertPuzzleToJSON() {
 
 function printPDF(style) {
   let doc = new jsPDF('p', 'pt');
-  if (style) {
-    style = style.toUpperCase();
-  }
+  style = style.toUpperCase();
+  let gridFormat = {
+    "squareSize":     24,
+    // "pageOrigin":     { "x": 50, "y": 50 },
+    "gridOrigin":     { "x": 50, "y": 80 },
+    "labelOffset":    { "x": 1, "y": 6 },
+    "fillOffset":     { "x": 12, "y": 17 },
+    "labelFontSize":  7,
+    "fillFontSize":   14,
+    "innerLineWidth": .5,
+    "outerLineWidth": 2
+  };
+  let clueFormat = {
+    "font": "helvetica",
+    "fontSize": 9,
+    "labelWidth": 13,
+    "clueWidth": 94,
+    "columnSeparator": 18,
+    "marginTop": [465, 465, 465, 85],
+    "marginBottom": doc.internal.pageSize.height - 50,
+    "marginLeft": 50,
+    "marginRight": 0
+  };
+  let infoFormat = {
+    "marginX": 50,
+    "marginY": 50
+  };
+  let isSunday = (xw.rows == xw.cols && xw.rows == DEFAULT_SUNDAY_SIZE);
   switch (style) {
     case "NYT":
-      layoutPDFGrid(doc, 117, 210, true); // filled
+      if (isSunday){
+        gridFormat.gridOrigin.x = 45;
+        gridFormat.gridOrigin.y = 150;
+        gridFormat.fillFontSize = 12;
+      } else {
+        gridFormat.gridOrigin.x = 117;
+        gridFormat.gridOrigin.y = 210;
+      }
+      layoutPDFGrid(doc, gridFormat, true); // filled
       doc.addPage();
-      layoutPDFGrid(doc, 117, 210); // unfilled
+      layoutPDFGrid(doc, gridFormat); // unfilled
       doc.addPage();
       layoutPDFClues(doc, style);
       if (!layoutPDFInfo(doc, style)) {
@@ -425,9 +454,24 @@ function printPDF(style) {
       }
       break;
     default:
-      layoutPDFGrid(doc, 50, 80);
-      layoutPDFClues(doc);
-      layoutPDFInfo(doc);
+      if (isSunday){
+        gridFormat.squareSize = 16;
+        gridFormat.labelFontSize = 5;
+        gridFormat.labelOffset.y = 5; 
+        gridFormat.gridOrigin.x = 20;
+        gridFormat.gridOrigin.y = 43;
+        clueFormat.labelWidth = 17;
+        clueFormat.clueWidth = 77;
+        clueFormat.columnSeparator = 20;
+        clueFormat.marginTop = [395, 395, 395, 50, 50];
+        clueFormat.marginBottom = doc.internal.pageSize.height - 20;
+        clueFormat.marginLeft = 20;
+        infoFormat.marginX = 20;
+        infoFormat.marginY = 30;
+      }
+      layoutPDFGrid(doc, gridFormat);
+      layoutPDFClues(doc, style, clueFormat);
+      layoutPDFInfo(doc, style, infoFormat);
       break;
   }
   doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
@@ -463,18 +507,7 @@ function generatePDFClues() {
   return [acrossClues, downClues];
 }
 
-function layoutPDFGrid(doc, x, y, isFilled) {
-  let format = {
-    "squareSize":     24,
-    // "pageOrigin":     { "x": 50, "y": 50 },
-    "gridOrigin":     { "x": x, "y": y },
-    "labelOffset":    { "x": 1, "y": 6 },
-    "fillOffset":     { "x": 12, "y": 17 },
-    "labelFontSize":  7,
-    "fillFontSize":   14,
-    "innerLineWidth": .5,
-    "outerLineWidth": 2
-  };
+function layoutPDFGrid(doc, format, isFilled) {
   // Draw grid
   doc.setDrawColor(0);
   doc.setLineWidth(format.outerLineWidth);
@@ -515,7 +548,7 @@ function layoutPDFGrid(doc, x, y, isFilled) {
   }
 }
 
-function layoutPDFInfo(doc, style) {
+function layoutPDFInfo(doc, style, format) {
   doc.setFont("helvetica");
   switch (style) {
     case "NYT":
@@ -538,18 +571,21 @@ function layoutPDFInfo(doc, style) {
       }
       break;
     default:
-      doc.setFontSize(18);
+      doc.setFontSize(12);
       doc.setFontType("normal");
-      doc.text(50, 50 + 8, xw.title);
+      doc.text(format.marginX, format.marginY, xw.title);
       doc.setFontSize(9);
       doc.setFontType("bold");
-      doc.text(50, 50 + 20, xw.author.toUpperCase());
+      let x = doc.internal.pageSize.width - format.marginX;
+      doc.text(x, format.marginY, xw.author.toUpperCase(), null, null, "right");
+      doc.setLineWidth(0.5);
+      doc.line(format.marginX, format.marginY + 5, x, format.marginY + 5);
       break;
   }
   return 1;
 }
 
-function layoutPDFClues(doc, style) {
+function layoutPDFClues(doc, style, format) {
   const [acrossClues, downClues] = generatePDFClues();
 
   switch (style) {
@@ -579,17 +615,6 @@ function layoutPDFClues(doc, style) {
                     ], downClues, clueFormat);
       break;
     default:
-      const format = {
-        "font": "helvetica",
-        "fontSize": 9,
-        "labelWidth": 13,
-        "clueWidth": 94,
-        "columnSeparator": 18,
-        "marginTop": [465, 465, 465, 85],
-        "marginBottom": doc.internal.pageSize.height - 50,
-        "marginLeft": 50,
-        "marginRight": 0
-      };
       doc.setFont(format.font);
       doc.setFontSize(format.fontSize);
       let currentColumn = 0;

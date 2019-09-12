@@ -14,11 +14,11 @@
 
   <div id="toolbar">
     <div id="new-grid-menu" class="menu hidden" onmouseleave="hideMenu(event)">
-      <h4>New grid size:</h4>
-      <button id="new-grid-15" class="default" type="button" data-tooltip="15x15" onmouseup="setDefault(event)" onclick="createNewPuzzle(15,15)">
+      <h4>New blank puzzle:</h4>
+      <button id="new-grid-15" class="default" type="button" data-tooltip="NYT daily (15×15)" onmouseup="setDefault(event)" onclick="createNewPuzzle(15,15)">
         <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
       </button>
-      <button id="new-grid-21" type="button" data-tooltip="21x21" onmouseup="setDefault(event)" onclick="createNewPuzzle(3,4)">
+      <button id="new-grid-21" type="button" data-tooltip="NYT Sunday (21×21)" onmouseup="setDefault(event)" onclick="createNewPuzzle(21,21)">
         <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
       </button>
     </div>
@@ -37,7 +37,7 @@
       <button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onmouseup="setDefault(event)" onclick="writeFile('puz')">
         <i class="fa fa-download fa-fw" aria-hidden="true"></i>
       </button>
-      <button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF()">
+      <button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('puzzle')">
         <i class="fa fa-print fa-fw" aria-hidden="true"></i>
       </button>
       <button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('nyt')">
