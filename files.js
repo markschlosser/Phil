@@ -300,10 +300,6 @@ function openFile(e) {
 }
 
 function convertJSONToPuzzle(puz) {
-  if ((puz.size.rows != puz.size.cols) ||
-      (puz.size.rows != DEFAULT_SIZE && puz.size.rows != DEFAULT_SUNDAY_SIZE)) {
-    // new Notification("Warning, using non-standard grid sizes may cause problems with some features.", 10);
-  }
   createNewPuzzle(puz.size.rows, puz.size.cols);
   // Update puzzle title, author
   xw.title = puz.title || DEFAULT_TITLE;
@@ -433,10 +429,9 @@ function printPDF(style) {
     "marginX": 50,
     "marginY": 50
   };
-  let isSunday = (xw.rows == xw.cols && xw.rows == DEFAULT_SUNDAY_SIZE);
   switch (style) {
     case "NYT":
-      if (isSunday){
+      if (xw.isSundaySize()){
         gridFormat.gridOrigin.x = 45;
         gridFormat.gridOrigin.y = 150;
         gridFormat.fillFontSize = 12;
@@ -454,10 +449,10 @@ function printPDF(style) {
       }
       break;
     default:
-      if (isSunday){
+      if (xw.isSundaySize()){
         gridFormat.squareSize = 16;
         gridFormat.labelFontSize = 5;
-        gridFormat.labelOffset.y = 5; 
+        gridFormat.labelOffset.y = 5;
         gridFormat.gridOrigin.x = 20;
         gridFormat.gridOrigin.y = 43;
         clueFormat.labelWidth = 17;

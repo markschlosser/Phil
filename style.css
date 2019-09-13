@@ -16,7 +16,7 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
-  width: 1239px;
+  width: auto;
   margin: 5px;
 }
 
@@ -38,7 +38,7 @@ h1 {
 }
 
 #credits a {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--med-grey);
   text-decoration: none;
 }
@@ -399,6 +399,11 @@ kbd {
 #toolbar .menu button {
   display: block;
   clear: both;
+}
+
+#toolbar .menu form {
+  display: block;
+  margin: 0px 0px 0px 35px;
 }
 
 #toolbar .menu button:after {

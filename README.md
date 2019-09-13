@@ -11,9 +11,9 @@ Phil helps you make crosswords, using client-side JavaScript.
 New to this fork:
 * [Bob Copeland's](https://github.com/bcopeland) pure JS auto filler
 * NYT Sunday grid (21×21) support
+* Custom grid sizes (PDF exports will be wonky)
 
 TODO:
-* Arbitrary (rectangular) grid size input
 * Cross-checked fill suggestions
 * Rebus support
 * Stats
@@ -64,4 +64,4 @@ Unless required by law or agreed in writing, software distributed under the Lice
 is distributed on an **'as is' basis, without warranties or conditions**, express or implied.
 See the [License](LICENSE.txt) for the specific language governing permissions and limitations.
 
-Original [Phil](https://github.com/keiranking/Phil) Copyright &copy; 2017 [Keiran King](https://github.com/keiranking).
+Original [Phil](https://github.com/keiranking/Phil) Copyright &copy; 2017 [Keiran King](http://www.keiranking.com/).

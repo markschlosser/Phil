@@ -70,6 +70,15 @@ class Crossword {
       }
     }
   }
+  isDailySize() {
+    return this.rows == DEFAULT_SIZE && this.cols == DEFAULT_SIZE;
+  }
+  isSundaySize() {
+    return this.rows == DEFAULT_SUNDAY_SIZE && this.cols == DEFAULT_SUNDAY_SIZE;
+  }
+  isStandardSize() {
+    return this.isDailySize() || this.isSundaySize();
+  }
 }
 
 class Grid {
@@ -187,6 +196,8 @@ class Toolbar {
   constructor(id) {
     this.id = id;
     this.buttons = { // rewrite this programmatically
+      "newPuzzle15": new Button("new-grid-15"),
+      "newPuzzle21": new Button("new-grid-21"),
       "newPuzzle": new Button("new-grid"),
       "openPuzzle": new Button("open-JSON"),
       "exportJSON": new Button("export-JSON"),
@@ -319,7 +330,17 @@ function createNewPuzzle(rows, cols) {
     square.addEventListener('click', mouseHandler);
   }
   grid.addEventListener('keydown', keyboardHandler);
-  console.log("New puzzle created.")
+  console.log(`New ${xw.rows}×${xw.cols} puzzle created.`)
+
+  // if (!xw.isStandardSize()){
+  //   new Notification("Warning, using non-standard grid sizes may cause problems with some features.", 10);
+  // }
+}
+
+function createNewCustomPuzzle() {
+  let rows = document.getElementById("custom-rows").value;
+  let cols = document.getElementById("custom-cols").value;
+  createNewPuzzle(rows, cols);
 }
 
 function mouseHandler(e) {
@@ -845,11 +866,12 @@ function hideMenu(e) {
 }
 
 function setDefault(e) {
-  let d = e.target.parentNode.querySelector(".default");
+  let button = e.target.closest("button");
+  let d = button.parentNode.querySelector(".default");
   d.classList.remove("default");
-  e.target.classList.add("default");
-  menuButton = document.getElementById(e.target.parentNode.getAttribute("id").replace("-menu", ""));
-  menuButton.innerHTML = e.target.innerHTML;
+  button.classList.add("default");
+  menuButton = document.getElementById(button.parentNode.getAttribute("id").replace("-menu", ""));
+  menuButton.innerHTML = button.innerHTML;
 }
 
 function doDefault(e) {

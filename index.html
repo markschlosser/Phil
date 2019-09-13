@@ -1,5 +1,6 @@
 <html>
 <head>
+  <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="style.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <title>Phil - a free crossword maker</title>
@@ -21,6 +22,14 @@
       <button id="new-grid-21" type="button" data-tooltip="NYT Sunday (21×21)" onmouseup="setDefault(event)" onclick="createNewPuzzle(21,21)">
         <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
       </button>
+      <button id="new-grid-custom" type="submit" data-tooltip="Custom grid:" form="custom-grid-form" onmouseup="setDefault(event)">
+        <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+      </button>
+      <form id="custom-grid-form" action="javascript:void(0);" onsubmit="createNewCustomPuzzle()">
+        <input type="number" name="custom-rows" id="custom-rows" min=1 max=35>
+        ×
+        <input type="number" name="custom-cols" id="custom-cols" min=1 max=35>
+      </form>
     </div>
     <button id="new-grid" type="button" data-tooltip="New puzzle" onmouseenter="showMenu(event)" onclick="doDefault(event)">
       <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
@@ -111,9 +120,9 @@
     </table>
   </div>
   <div id="credits">
-    <a href="mailto:me@keiranking.com?Subject=Phil" target="_top">Contact</a> &middot;
-    <a href="http://www.keiranking.com/" target="_blank">keiranking.com</a> &middot;
-    <a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a></div>
+    A <a href="https://github.com/jmviz/Phil" target="_blank">fork</a>
+    of <a href="http://www.keiranking.com/" target="_blank">Keiran King's</a>
+    original <a href="https://github.com/keiranking/Phil" target="_blank">Phil</a></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
