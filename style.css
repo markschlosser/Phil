@@ -249,15 +249,16 @@ kbd {
 }
 
 #sidebar {
-  width: 260px;
+  width: 220px;
   height: 550px;
   float: left;
   margin-left: 8px;
 }
 
 #sidebar .current-word {
-  margin:0;
-  font-size: 21pt;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  margin: 0;
+  /* font-size: 21pt; */
   font-weight: 300;
 }
 
@@ -274,6 +275,7 @@ kbd {
 }
 
 #sidebar ul.matches {
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
   margin: 0;
   height: 70%;
   /*width: 160px;*/
@@ -281,8 +283,8 @@ kbd {
   padding: 0;
   color: var(--med-grey);
   font-weight: 400;
-  overflow: hidden;
-  overflow-y: scroll;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 #sidebar ul.matches li {
