@@ -119,60 +119,77 @@ function matchFromWordlist(word) {
   }
 }
 
-function matchCurrentWord(direction, isStrictMatching) {
-  let word = (direction==ACROSS) ? current.acrossWord : current.downWord;
-  let matches = matchFromWordlist(word);
-  if (isStrictMatching) {
-    if (direction == ACROSS) {
-      let row = current.row;
-      let start = current.acrossStartIndex;
-      let end = current.acrossEndIndex;
-      for (let j = start; j < end; j++) {
-        if (xw.fill[row][j] == BLANK) {
-          let cross = getWordAt(row, j, DOWN);
-          if (!cross.split("").every(c => c == DASH)){
-            let colText = "";
-            for (let i = 0; i < xw.rows; i++) {
-              colText += xw.fill[i][j];
-            }
-            let [crossStart, crossEnd] = getWordIndices(colText, DOWN, row);
-            let index = row - crossStart;
-            let crossMatches = matchFromWordlist(cross);
-            let letters = [];
-            for (let c of crossMatches) {
-              console.log(c[index]);
-              if (!letters.includes(c[index])) letters.push(c[index]);
-            }
-            matches = matches.filter(m => letters.includes(m[j-start]));
+function matchWordStrict(square, direction, isFirstCall) {
+  let matches = [];
+  if (direction == ACROSS) {
+    matches = matchFromWordlist(square.acrossWord);
+    let row = square.row;
+    let start = square.acrossStartIndex;
+    let end = square.acrossEndIndex;
+    for (let j = start; j < end; j++) {
+      if (xw.fill[row][j] == BLANK) {
+        let cross = getWordAt(row, j, DOWN);
+        if (!cross.split("").every(c => c == DASH)) {
+          let colText = "";
+          for (let i = 0; i < xw.rows; i++) {
+            colText += xw.fill[i][j];
           }
+          let [crossStart, crossEnd] = getWordIndices(colText, DOWN, row);
+          let index = row - crossStart;
+          let crossMatches = [];
+          let crossSquare = {
+            "downWord": cross,
+            "col":j,
+            "downStartIndex": crossStart,
+            "downEndIndex": crossEnd
+          };
+          if (isFirstCall) {
+            crossMatches = matchWordStrict(crossSquare, DOWN, false);
+          } else {
+            crossMatches = matchFromWordlist(cross);
+          }
+          let letters = [];
+          for (let c of crossMatches) {
+            if (!letters.includes(c[index])) letters.push(c[index]);
+          }
+          matches = matches.filter(m => letters.includes(m[j-start]));
         }
       }
-      return matches;
-    } else {
-      let col = current.col;
-      let start = current.downStartIndex;
-      let end = current.downEndIndex;
-      for (let i = start; i < end; i++) {
-        if (xw.fill[i][col] == BLANK) {
-          let cross = getWordAt(i, col, ACROSS);
-          if (!cross.split("").every(c => c == DASH)){
-            let rowText = xw.fill[i];
-            let [crossStart, crossEnd] = getWordIndices(rowText, ACROSS, col);
-            let index = col - crossStart;
-            let crossMatches = matchFromWordlist(cross);
-            let letters = [];
-            for (let c of crossMatches) {
-              if (!letters.includes(c[index])) letters.push(c[index]);
-            }
-            matches = matches.filter(m => letters.includes(m[i-start]));
-          }
-        }
-      }
-      return matches;
     }
   } else {
-    return matches;
+    matches = matchFromWordlist(square.downWord);
+    let col = square.col;
+    let start = square.downStartIndex;
+    let end = square.downEndIndex;
+    for (let i = start; i < end; i++) {
+      if (xw.fill[i][col] == BLANK) {
+        let cross = getWordAt(i, col, ACROSS);
+        if (!cross.split("").every(c => c == DASH)) {
+          let rowText = xw.fill[i];
+          let [crossStart, crossEnd] = getWordIndices(rowText, ACROSS, col);
+          let index = col - crossStart;
+          let crossMatches = [];
+          let crossSquare = {
+            "acrossWord": cross,
+            "row":i,
+            "acrossStartIndex": crossStart,
+            "acrossEndIndex": crossEnd
+          };
+          if (isFirstCall) {
+            crossMatches = matchWordStrict(crossSquare, ACROSS, false);
+          } else {
+            crossMatches = matchFromWordlist(cross);
+          }          
+          let letters = [];
+          for (let c of crossMatches) {
+            if (!letters.includes(c[index])) letters.push(c[index]);
+          }
+          matches = matches.filter(m => letters.includes(m[i-start]));
+        }
+      }
+    }
   }
+  return matches;
 }
 
 function updateMatchesUI() {
@@ -180,8 +197,15 @@ function updateMatchesUI() {
   let downMatchList = document.getElementById("down-matches");
   acrossMatchList.innerHTML = "";
   downMatchList.innerHTML = "";
-  const acrossMatches = matchCurrentWord(ACROSS, isStrictMatching);
-  const downMatches = matchCurrentWord(DOWN, isStrictMatching);
+  let acrossMatches = [];
+  let downMatches = [];
+  if (isStrictMatching) {
+    acrossMatches = matchWordStrict(current, ACROSS, true);
+    downMatches = matchWordStrict(current, DOWN, true);
+  } else {
+    acrossMatches = matchFromWordlist(current.acrossWord);
+    downMatches = matchFromWordlist(current.downWord);
+  }
   for (i = 0; i < acrossMatches.length; i++) {
     let li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
