@@ -1,3 +1,5 @@
+// Modified by jmviz. Original notice follows:
+//
 // Phil
 // ------------------------------------------------------------------------
 // Copyright 2017 Keiran King
@@ -123,32 +125,46 @@ function matchCurrentWord(direction, isStrictMatching) {
   if (isStrictMatching) {
     if (direction == ACROSS) {
       let row = current.row;
-      for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
+      let start = current.acrossStartIndex;
+      let end = current.acrossEndIndex;
+      for (let j = start; j < end; j++) {
         if (xw.fill[row][j] == BLANK) {
           let cross = getWordAt(row, j, DOWN);
           if (!cross.split("").every(c => c == DASH)){
+            let colText = "";
+            for (let i = 0; i < xw.rows; i++) {
+              colText += xw.fill[i][j];
+            }
+            let [crossStart, crossEnd] = getWordIndices(colText, DOWN, row);
+            let index = row - crossStart;
             let crossMatches = matchFromWordlist(cross);
             let letters = [];
             for (let c of crossMatches) {
-              if (!letters.includes(c[row])) letters.push(c[row]);
+              console.log(c[index]);
+              if (!letters.includes(c[index])) letters.push(c[index]);
             }
-            matches = matches.filter(m => letters.includes(m[j]));
+            matches = matches.filter(m => letters.includes(m[j-start]));
           }
         }
       }
       return matches;
     } else {
       let col = current.col;
-      for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
+      let start = current.downStartIndex;
+      let end = current.downEndIndex;
+      for (let i = start; i < end; i++) {
         if (xw.fill[i][col] == BLANK) {
           let cross = getWordAt(i, col, ACROSS);
           if (!cross.split("").every(c => c == DASH)){
+            let rowText = xw.fill[i];
+            let [crossStart, crossEnd] = getWordIndices(rowText, ACROSS, col);
+            let index = col - crossStart;
             let crossMatches = matchFromWordlist(cross);
             let letters = [];
             for (let c of crossMatches) {
-              if (!letters.includes(c[col])) letters.push(c[col]);
+              if (!letters.includes(c[index])) letters.push(c[index]);
             }
-            matches = matches.filter(m => letters.includes(m[i]));
+            matches = matches.filter(m => letters.includes(m[i-start]));
           }
         }
       }
