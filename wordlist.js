@@ -117,13 +117,55 @@ function matchFromWordlist(word) {
   }
 }
 
+function matchCurrentWord(direction, isStrictMatching) {
+  let word = (direction==ACROSS) ? current.acrossWord : current.downWord;
+  let matches = matchFromWordlist(word);
+  if (isStrictMatching) {
+    if (direction == ACROSS) {
+      let row = current.row;
+      for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
+        if (xw.fill[row][j] == BLANK) {
+          let cross = getWordAt(row, j, DOWN);
+          if (!cross.split("").every(c => c == DASH)){
+            let crossMatches = matchFromWordlist(cross);
+            let letters = [];
+            for (let c of crossMatches) {
+              if (!letters.includes(c[row])) letters.push(c[row]);
+            }
+            matches = matches.filter(m => letters.includes(m[j]));
+          }
+        }
+      }
+      return matches;
+    } else {
+      let col = current.col;
+      for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
+        if (xw.fill[i][col] == BLANK) {
+          let cross = getWordAt(i, col, ACROSS);
+          if (!cross.split("").every(c => c == DASH)){
+            let crossMatches = matchFromWordlist(cross);
+            let letters = [];
+            for (let c of crossMatches) {
+              if (!letters.includes(c[col])) letters.push(c[col]);
+            }
+            matches = matches.filter(m => letters.includes(m[i]));
+          }
+        }
+      }
+      return matches;
+    }
+  } else {
+    return matches;
+  }
+}
+
 function updateMatchesUI() {
   let acrossMatchList = document.getElementById("across-matches");
   let downMatchList = document.getElementById("down-matches");
   acrossMatchList.innerHTML = "";
   downMatchList.innerHTML = "";
-  const acrossMatches = matchFromWordlist(current.acrossWord);
-  const downMatches = matchFromWordlist(current.downWord);
+  const acrossMatches = matchCurrentWord(ACROSS, isStrictMatching);
+  const downMatches = matchCurrentWord(DOWN, isStrictMatching);
   for (i = 0; i < acrossMatches.length; i++) {
     let li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();

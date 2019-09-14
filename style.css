@@ -256,7 +256,7 @@ kbd {
 }
 
 #sidebar .current-word {
-  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  font-family: "SFMono-Regular", "Consolas", "DejaVuSansMono", "Menlo", monospace;
   margin: 0;
   /* font-size: 21pt; */
   font-weight: 300;
@@ -275,9 +275,9 @@ kbd {
 }
 
 #sidebar ul.matches {
-  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  font-family: "SFMono-Regular", "Consolas", "DejaVuSansMono", "Menlo", monospace;
   margin: 0;
-  height: 70%;
+  height: 76%;
   /*width: 160px;*/
   list-style-type: none;
   padding: 0;

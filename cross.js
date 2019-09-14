@@ -41,6 +41,7 @@ const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 
 let history = [];
 let isSymmetrical = true;
+let isStrictMatching = false;
 let grid = undefined;
 let squares = undefined;
 let isMutated = false;
@@ -198,6 +199,7 @@ class Toolbar {
     this.buttons = { // rewrite this programmatically
       "newPuzzle15": new Button("new-grid-15"),
       "newPuzzle21": new Button("new-grid-21"),
+      "newPuzzleCustom": new Button("new-grid-custom"),
       "newPuzzle": new Button("new-grid"),
       "openPuzzle": new Button("open-JSON"),
       "exportJSON": new Button("export-JSON"),
@@ -209,6 +211,7 @@ class Toolbar {
       "freezeLayout": new Button("toggle-freeze-layout"),
       "clearFill": new Button("clear-fill"),
       "toggleSymmetry": new Button("toggle-symmetry"),
+      "strictMatching": new Button("toggle-strict-matching"),
       "openWordlist": new Button("open-wordlist"),
       "autoFill": new Button("auto-fill")
     }
@@ -325,6 +328,7 @@ function createNewPuzzle(rows, cols) {
   updateGridHighlights();
   updateSidebarHighlights();
   updateCluesUI();
+  updateMatchesUI();
 
   for (const square of squares) {
     square.addEventListener('click', mouseHandler);
@@ -733,6 +737,17 @@ function toggleSymmetry() {
   buttonState = symButton.getAttribute("data-state");
   symButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
   symButton.setAttribute("data-tooltip", "Turn " + buttonState + " symmetry");
+}
+
+function toggleStrictMatching() {
+  isStrictMatching = !isStrictMatching;
+  // Update UI button
+  let strictButton = document.getElementById("toggle-strict-matching");
+  strictButton.classList.toggle("button-on");
+  buttonState = strictButton.getAttribute("data-state");
+  strictButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
+  strictButton.setAttribute("data-tooltip", "Turn " + buttonState + " strict matching");
+  updateMatchesUI();
 }
 
 // function toggleHelp() {
