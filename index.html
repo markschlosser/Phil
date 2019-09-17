@@ -1,6 +1,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" type="text/css" href="style.css" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <title>Phil - a free crossword maker</title>
@@ -112,8 +113,31 @@
     </div>
   </div>
 
+  <div id="stats">
+    <div id="charts">
+      <div class="chart">
+        <div id="letter-chart-title" class="chart-title">Letters</div>
+        <canvas id="letter-chart" width="150" height="400"></canvas>
+      </div>
+      <div class="chart">
+        <div id="word-chart-title" class="chart-title">Word lengths</div>
+        <canvas id="word-chart" width="150" height="400"></canvas>
+      </div>
+    </div>
+    <table id="stats-table">
+      <tr> <td>Words: </td> <td id="stats-words" class="stats-number"></td> </tr>
+      <tr> <td>Average word length: </td> <td id="stats-avg-word-length" class="stats-number"></td> </tr>
+      <tr> <td>Blocks: </td> <td id="stats-blocks" class="stats-number"></td> </tr>
+      <tr> <td>Fully connected squares: </td> <td id="stats-fully-connected-squares" class="stats-number"></td> </tr>
+      <tr> <td>Open squares: </td> <td id="stats-open-squares" class="stats-number"></td> </tr>
+      <tr> <td>Letters: </td> <td id="stats-letters" class="stats-number"></td> </tr>
+      <tr> <td>Average Scrabble points: </td> <td id="stats-avg-scrabble-points" class="stats-number"></td> </tr>
+    </table>
+  </div>
+
   <div id="footer">
   </div>
+
   <div id="shortcuts" class="hidden">
     <h3>Keyboard Shortcuts</h3>
     <table>
@@ -122,14 +146,19 @@
       <tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
     </table>
   </div>
+
   <div id="credits">
     A <a href="https://github.com/jmviz/Phil" target="_blank">fork</a>
     of <a href="http://www.keiranking.com/" target="_blank">Keiran King's</a>
-    original <a href="https://github.com/keiranking/Phil" target="_blank">Phil</a></div>
+    original <a href="https://github.com/keiranking/Phil" target="_blank">Phil</a>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.7.0"></script>
   <script src="patterns.js"></script>
+  <script src="stats.js"></script>
   <script src="cross.js"></script>
   <script src="wordlist.js"></script>
   <script src="files.js"></script>

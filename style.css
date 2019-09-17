@@ -12,10 +12,12 @@
   --dk-blue-mono: #656565;
   --green: #00ff00;
   --red: #ff3333;
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
+  --font-family-mono: "SFMono-Regular", "Consolas", "DejaVuSansMono", "Menlo", monospace;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
+  font-family: var(--font-family-sans);
   width: auto;
   margin: 5px;
 }
@@ -95,6 +97,7 @@ h1 {
   /*border: 1px solid var(--black);*/
   border-left: 1px solid var(--black);
   border-top: 1px solid var(--black);
+  padding-top: 6px;
 }
 
 #grid td.active {
@@ -256,7 +259,7 @@ kbd {
 }
 
 #sidebar .current-word {
-  font-family: "SFMono-Regular", "Consolas", "DejaVuSansMono", "Menlo", monospace;
+  font-family: var(--font-family-mono);
   margin: 0;
   /* font-size: 21pt; */
   font-weight: 300;
@@ -275,7 +278,7 @@ kbd {
 }
 
 #sidebar ul.matches {
-  font-family: "SFMono-Regular", "Consolas", "DejaVuSansMono", "Menlo", monospace;
+  font-family: var(--font-family-mono);
   margin: 0;
   height: 76%;
   /*width: 160px;*/
@@ -458,4 +461,33 @@ kbd {
   position: absolute;
   left: 2px;
   top: 0px;
+}
+
+#stats {
+  float: left;
+  margin-left: 8px;
+}
+
+#stats .chart {
+  float: left;
+}
+
+#stats .chart-title {
+  text-align: left;
+  color: var(--dk-grey);
+  font-weight: 300;
+  margin-left: 6px;
+}
+
+#stats table {
+  color: var(--dk-grey);
+  font-weight: 300;
+  font-size: 14;
+}
+
+#stats .stats-number {
+  font-family: var(--font-family-mono);
+  font-size: 12;
+  font-weight: 100;
+  vertical-align: bottom;
 }

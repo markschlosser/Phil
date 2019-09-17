@@ -13,15 +13,17 @@ New to this fork:
 * NYT Sunday grid (21×21) support
 * Custom grid sizes (PDF exports will be wonky)
 * Strict matching mode (fill suggestions filtered by crossers' constraints)
+* Stats
 
 TODO:
+* Help button for popup with keyboard shortcuts, credits, etc.
+* Dark mode
 * Rebus support
-* Stats
 * Autofill region
 
 ## Related repositories
 
-Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and [jsPDF](https://github.com/MrRio/jsPDF/) (along with [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/)) for generating PDFs.
+Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) and [fonticon](https://github.com/devgg/FontIcon) for icons, [jsPDF](https://github.com/MrRio/jsPDF/) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/) for generating PDFs, and [Chart.js](https://github.com/chartjs) with the [datalabels](https://github.com/chartjs/chartjs-plugin-datalabels) plugin for charts.
 
 ## Getting started
 

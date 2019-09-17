@@ -281,6 +281,7 @@ class Interface {
     updateGridHighlights();
     updateSidebarHighlights();
     updateCluesUI();
+    updateStatsUI(true);
   }
 }
 
@@ -331,6 +332,7 @@ function createNewPuzzle(rows, cols) {
   updateSidebarHighlights();
   updateCluesUI();
   updateMatchesUI();
+  updateStatsUI(true);
 
   for (const square of squares) {
     square.addEventListener('click', mouseHandler);
@@ -344,8 +346,8 @@ function createNewPuzzle(rows, cols) {
 }
 
 function createNewCustomPuzzle() {
-  let rows = document.getElementById("custom-rows").value;
-  let cols = document.getElementById("custom-cols").value;
+  let rows = parseInt(document.getElementById("custom-rows").value);
+  let cols = parseInt(document.getElementById("custom-cols").value);
   createNewPuzzle(rows, cols);
 }
 
@@ -460,9 +462,6 @@ function keyboardHandler(e) {
 }
 
 function updateUI() {
-  // if (isMutated) {
-  //   autoFill(true);  // quick fill
-  // }
   updateGridUI();
   updateLabelsAndClues();
   updateActiveWords();
@@ -471,6 +470,10 @@ function updateUI() {
   updateMatchesUI();
   updateCluesUI();
   updateInfoUI();
+  if (isMutated) {
+    updateStatsUI();
+    // autoFill(true);  // quick fill
+  }
 }
 
 function updateGridUI() {
