@@ -14,12 +14,12 @@ New to this fork:
 * Custom grid sizes (PDF exports will be wonky)
 * Strict matching mode (fill suggestions filtered by crossers' constraints)
 * Stats
+* Dark mode
 
 TODO:
-* Help button for popup with keyboard shortcuts, credits, etc.
-* Dark mode
 * Rebus and circle support
-* Autofill bugfixes, autofill region, etc.
+* Help button for popup with keyboard shortcuts, credits, etc.
+* Autofill bugfixes, UI integration, alternatives, autofill region, etc.
 
 ## Related repositories
 

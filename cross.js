@@ -20,7 +20,7 @@ const keyboard = {
   "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
   "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
   "z":      90,
-  "black":  190, ".": 190,
+  "block":  190, ".": 190,
   "delete": 8,
   "enter":  13,
   "space":  32,
@@ -29,7 +29,7 @@ const keyboard = {
   "right":  39,
   "down":   40
 };
-const BLACK = ".";
+const BLOCK = ".";
 const DASH = "-";
 const BLANK = " ";
 const ACROSS = "across";
@@ -44,6 +44,7 @@ const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 let history = [];
 let isSymmetrical = true;
 let isStrictMatching = false;
+let isDarkMode = false;
 let grid;
 let squares;
 let isMutated = false;
@@ -136,10 +137,10 @@ class Grid {
           activeCell.classList.remove("pencil");
         }
         activeCell.lastChild.innerHTML = fill;
-        if (fill == BLACK) {
-          activeCell.classList.add("black");
+        if (fill == BLOCK) {
+          activeCell.classList.add("block");
         } else {
-          activeCell.classList.remove("black");
+          activeCell.classList.remove("block");
         }
       }
     }
@@ -215,7 +216,8 @@ class Toolbar {
       "toggleSymmetry": new Button("toggle-symmetry"),
       "strictMatching": new Button("toggle-strict-matching"),
       "openWordlist": new Button("open-wordlist"),
-      "autoFill": new Button("auto-fill")
+      "autoFill": new Button("auto-fill"),
+      "toggleDarkMode": new Button("toggle-dark-mode")
     };
   }
 }
@@ -290,6 +292,7 @@ class Interface {
 let xw = new Crossword(); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 current.update();
+if (localStorage.getItem("theme") == "dark") toggleDarkMode();
 
 //____________________
 // F U N C T I O N S
@@ -376,7 +379,7 @@ function keyboardHandler(e) {
   if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1);
-    if (oldContent == BLACK) {
+    if (oldContent == BLOCK) {
       if (isSymmetrical) {
         xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
       }
@@ -390,14 +393,14 @@ function keyboardHandler(e) {
     }
     isMutated = true;
   }
-  if (e.which == keyboard.black) {
-      if (xw.fill[current.row][current.col] == BLACK) { // if already black...
+  if (e.which == keyboard.block) {
+      if (xw.fill[current.row][current.col] == BLOCK) { // if already block...
         e = new Event('keydown');
         e.which = keyboard.delete; // make it a white square
       } else {
-        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
+        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLOCK + xw.fill[current.row].slice(current.col + 1);
         if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLOCK + xw.fill[symRow].slice(symCol + 1);
         }
       }
       isMutated = true;
@@ -409,7 +412,7 @@ function keyboardHandler(e) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
-      if (oldContent == BLACK) {
+      if (oldContent == BLOCK) {
         if (isSymmetrical) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
         }
@@ -430,25 +433,25 @@ function keyboardHandler(e) {
       let content = xw.fill[current.row][current.col];
       switch (e.which) {
         case keyboard.left:
-          if (current.direction == ACROSS || content == BLACK) {
+          if (current.direction == ACROSS || content == BLOCK) {
             current.col -= (current.col == 0) ? 0 : 1;
           }
           current.direction = ACROSS;
           break;
         case keyboard.up:
-          if (current.direction == DOWN || content == BLACK) {
+          if (current.direction == DOWN || content == BLOCK) {
             current.row -= (current.row == 0) ? 0 : 1;
           }
           current.direction = DOWN;
           break;
         case keyboard.right:
-          if (current.direction == ACROSS || content == BLACK) {
+          if (current.direction == ACROSS || content == BLOCK) {
             current.col += (current.col == xw.cols - 1) ? 0 : 1;
           }
           current.direction = ACROSS;
           break;
         case keyboard.down:
-          if (current.direction == DOWN || content == BLACK) {
+          if (current.direction == DOWN || content == BLOCK) {
             current.row += (current.row == xw.rows - 1) ? 0 : 1;
           }
           current.direction = DOWN;
@@ -488,10 +491,10 @@ function updateGridUI() {
         activeCell.classList.remove("pencil");
       }
       activeCell.lastChild.innerHTML = fill;
-      if (fill == BLACK) {
-        activeCell.classList.add("black");
+      if (fill == BLOCK) {
+        activeCell.classList.add("block");
       } else {
-        activeCell.classList.remove("black");
+        activeCell.classList.remove("block");
       }
     }
   }
@@ -504,8 +507,8 @@ function updateCluesUI() {
   let downClueText = document.getElementById("down-clue-text");
   // const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 
-  // If the current cell is black, empty interface and get out
-  if (xw.fill[current.row][current.col] == BLACK) {
+  // If the current cell is block, empty interface and get out
+  if (xw.fill[current.row][current.col] == BLOCK) {
     acrossClueNumber.innerHTML = "";
     downClueNumber.innerHTML = "";
     acrossClueText.innerHTML = "";
@@ -567,9 +570,9 @@ function updateLabelsAndClues() {
     for (let j = 0; j < xw.cols; j++) {
       let isAcross = false;
       let isDown = false;
-      if (xw.fill[i][j] != BLACK) {
-        isDown = i == 0 || xw.fill[i - 1][j] == BLACK;
-        isAcross = j == 0 || xw.fill[i][j - 1] == BLACK;
+      if (xw.fill[i][j] != BLOCK) {
+        isDown = i == 0 || xw.fill[i - 1][j] == BLOCK;
+        isAcross = j == 0 || xw.fill[i][j - 1] == BLOCK;
       }
       const grid = document.getElementById("grid");
       let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
@@ -595,7 +598,7 @@ function updateLabelsAndClues() {
 }
 
 function updateActiveWords() {
-  if (xw.fill[current.row][current.col] == BLACK) {
+  if (xw.fill[current.row][current.col] == BLOCK) {
     current.acrossWord = '';
     current.downWord = '';
     current.acrossStartIndex = null;
@@ -639,10 +642,10 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
 }
 
 function getWordIndices(text, direction, position) {
-  let start = text.slice(0, position).lastIndexOf(BLACK);
+  let start = text.slice(0, position).lastIndexOf(BLOCK);
   start = (start == -1) ? 0 : start + 1;
   let limit = (direction == ACROSS) ? xw.cols : xw.rows;
-  let end = text.slice(position, limit).indexOf(BLACK);
+  let end = text.slice(position, limit).indexOf(BLOCK);
   end = (end == -1) ? limit : Number(position) + end;
   return [start, end];
 }
@@ -679,7 +682,7 @@ function updateSidebarHighlights() {
   acrossHeading.classList.remove("highlight");
   downHeading.classList.remove("highlight");
 
-  if (!currentCell.classList.contains("black")) {
+  if (!currentCell.classList.contains("block")) {
     if (current.direction == ACROSS) {
       acrossHeading.classList.add("highlight");
     } else {
@@ -726,8 +729,8 @@ function generatePattern() {
     const col = pattern[i][1];
     const symRow = xw.rows - 1 - row;
     const symCol = xw.cols - 1 - col;
-    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
-    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+    xw.fill[row] = xw.fill[row].slice(0, col) + BLOCK + xw.fill[row].slice(col + 1);
+    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLOCK + xw.fill[symRow].slice(symCol + 1);
   }
   isMutated = true;
   updateUI();
@@ -753,6 +756,24 @@ function toggleStrictMatching() {
   strictButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
   strictButton.setAttribute("data-tooltip", "Turn " + buttonState + " strict matching");
   updateMatchesUI();
+}
+
+function toggleDarkMode() {
+  if (!isDarkMode) {
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
+  } else {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  }
+  isDarkMode = !isDarkMode;
+  // Update UI button
+  let darkButton = document.getElementById("toggle-dark-mode");
+  darkButton.classList.toggle("button-on");
+  buttonState = darkButton.getAttribute("data-state");
+  darkButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
+  darkButton.setAttribute("data-tooltip", "Turn " + buttonState + " dark mode");
+  updateStatsUIColors();
 }
 
 // function toggleHelp() {
@@ -809,6 +830,7 @@ function runSolvePending() {
             xw.fill = e.data[1].split('\n');
             xw.fill.pop();  // strip empty last line
             updateGridUI();
+            updateStatsUI();
             grid.focus();
           }
         }

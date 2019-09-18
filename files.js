@@ -143,7 +143,7 @@ class PuzWriter {
 
   writeFill(json) {
     const grid = json.grid;
-    const BLACK_CP = '.'.codePointAt(0);
+    const BLOCK_CP = '.'.codePointAt(0);
     this.solution = this.buf.length;
     for (var i = 0; i < grid.length; i++) {
       this.buf.push(grid[i].codePointAt(0));  // Note: assumes grid is ISO-8859-1
@@ -151,7 +151,7 @@ class PuzWriter {
     this.grid = this.buf.length;
     for (let i = 0; i < grid.length; i++) {
       var cp = grid[i].codePointAt(0);
-      if (cp != BLACK_CP) cp = '-'.codePointAt(0);
+      if (cp != BLOCK_CP) cp = '-'.codePointAt(0);
       this.buf.push(cp);
     }
   }
@@ -519,7 +519,7 @@ function layoutPDFGrid(doc, format, isFilled) {
   doc.setLineWidth(format.innerLineWidth);
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      doc.setFillColor(xw.fill[i][j] == BLACK ? 0 : 255);
+      doc.setFillColor(xw.fill[i][j] == BLOCK ? 0 : 255);
       doc.rect(format.gridOrigin.x + (j * format.squareSize),
                format.gridOrigin.y + (i * format.squareSize), format.squareSize, format.squareSize, 'FD');
     }

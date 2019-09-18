@@ -1,8 +1,7 @@
 Chart.defaults.global.defaultFontFamily =
   getComputedStyle(document.body).getPropertyValue('--font-family-mono');
-let medGrey = getComputedStyle(document.body).getPropertyValue('--med-grey');
-let dkGrey = getComputedStyle(document.body).getPropertyValue('--dk-grey');
-Chart.defaults.global.defaultFontColor = dkGrey;
+Chart.defaults.global.defaultFontColor =
+  getComputedStyle(document.body).getPropertyValue('--secondary-color');
 
 var letterChart;
 var wordChart;
@@ -18,9 +17,8 @@ class BarChartSpec {
             datasets: [{
                 label: label,
                 data: data,
-                // backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                backgroundColor: medGrey,
-                borderColor: dkGrey,
+                backgroundColor: getComputedStyle(document.body).getPropertyValue('--tertiary-color'),
+                borderColor: getComputedStyle(document.body).getPropertyValue('--secondary-color'),
                 borderWidth: 1
             }]
         },
@@ -114,22 +112,22 @@ class Stats {
             this.scrabbleTotal += this.scrabblePoints[k];
           }
         }
-        if (fill == BLACK) {
+        if (fill == BLOCK) {
           this.blocks++;
         }
-        if (fill != BLACK) {
+        if (fill != BLOCK) {
           if (
-              (xw.fill[i-1] === undefined || xw.fill[i-1][j] != BLACK) &&
-              (xw.fill[i+1] === undefined || xw.fill[i+1][j] != BLACK) &&
-              (xw.fill[i][j-1] != BLACK) &&
-              (xw.fill[i][j+1] != BLACK)
+              (xw.fill[i-1] === undefined || xw.fill[i-1][j] != BLOCK) &&
+              (xw.fill[i+1] === undefined || xw.fill[i+1][j] != BLOCK) &&
+              (xw.fill[i][j-1] != BLOCK) &&
+              (xw.fill[i][j+1] != BLOCK)
           ) {
             this.fullyConnectedSquares++;
             if (
-                (xw.fill[i-1] === undefined || xw.fill[i-1][j-1] != BLACK) &&
-                (xw.fill[i-1] === undefined || xw.fill[i-1][j+1] != BLACK) &&
-                (xw.fill[i+1] === undefined || xw.fill[i+1][j-1] != BLACK) &&
-                (xw.fill[i+1] === undefined || xw.fill[i+1][j+1] != BLACK)
+                (xw.fill[i-1] === undefined || xw.fill[i-1][j-1] != BLOCK) &&
+                (xw.fill[i-1] === undefined || xw.fill[i-1][j+1] != BLOCK) &&
+                (xw.fill[i+1] === undefined || xw.fill[i+1][j-1] != BLOCK) &&
+                (xw.fill[i+1] === undefined || xw.fill[i+1][j+1] != BLOCK)
             ) {
               this.openSquares++;
             }
@@ -139,7 +137,7 @@ class Stats {
           }
           length++;
         }
-        if (fill == BLACK || j == xw.cols-1) {
+        if (fill == BLOCK || j == xw.cols-1) {
           if (onWord) {
             onWord = false;
             this.wordCounts[length-1]++;
@@ -153,13 +151,13 @@ class Stats {
     for (let j = 0; j < xw.cols; j++) {
       for (let i = 0; i < xw.rows; i++) {
         let fill = xw.fill[i][j];
-        if (fill != BLACK) {
+        if (fill != BLOCK) {
           if (!onWord) {
             onWord = true;
           }
           length++;
         }
-        if (fill == BLACK || i == xw.rows-1) {
+        if (fill == BLOCK || i == xw.rows-1) {
           if (onWord) {
             onWord = false;
             this.wordCounts[length-1]++;
@@ -232,4 +230,16 @@ function updateStatsTable() {
 function preciseRound(num, decimals) {
     let sign = num >= 0 ? 1 : -1;
     return (Math.round((num*Math.pow(10,decimals)) + (sign*0.001)) / Math.pow(10,decimals)).toFixed(decimals);
+}
+
+function updateStatsUIColors() {
+  let fontColor = getComputedStyle(document.body).getPropertyValue('--secondary-color');
+  let barColor = getComputedStyle(document.body).getPropertyValue('--tertiary-color');
+  Chart.defaults.global.defaultFontColor = fontColor;
+  letterChart.data.datasets[0].backgroundColor = barColor;
+  letterChart.data.datasets[0].borderColor = fontColor;
+  wordChart.data.datasets[0].backgroundColor = barColor;
+  wordChart.data.datasets[0].borderColor = fontColor;
+  letterChart.update();
+  wordChart.update();
 }

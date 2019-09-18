@@ -361,11 +361,11 @@ class Grid {
       for (let y = 0; y < this.height; y++) {
         for (let x = 0; x < this.width; x++) {
 
-          var is_black = rows[y][x] === BLOCK_CHAR;
+          var is_block = rows[y][x] === BLOCK_CHAR;
           var start_of_row = (dir == DIR_ACROSS && x == 0) ||
                              (dir == DIR_DOWN && y == 0);
 
-          var start_of_entry = ((!is_black) &&
+          var start_of_entry = ((!is_block) &&
             // previous character was '#' or start of line?
             (start_of_row || rows[y - yincr][x - xincr] == BLOCK_CHAR) &&
             // next character not '#'?, i.e. exclude unchecked squares
