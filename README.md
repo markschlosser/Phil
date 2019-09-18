@@ -1,6 +1,6 @@
 # Phil, a crossword maker
 
-<img src="images/screenshot.png" align="right" width="400" height="380">
+<img src="images/screenshot.png">
 
 Phil helps you make crosswords, using client-side JavaScript.
 * Import & export .xw ([JSON](https://www.xwordinfo.com/JSON/)) or .puz files.
