@@ -32,14 +32,16 @@ class Wordlist {
     this.word_bitmaps = [];
     this.scores = {};
     this.len_idx = new Map();
+    let word;
+    let score;
 
-    for (var i=0; i < word_array.length; i++) {
+    for (let i=0; i < word_array.length; i++) {
       var w = word_array[i];
       var split = w.split(/;|\s/);
       if (split.length >= 2) {
-        var [word, score] = [split[0], parseInt(split[1], 10)];
+        [word, score] = [split[0], parseInt(split[1], 10)];
       } else {
-        var [word, score] = [split[0], 1];
+        [word, score] = [split[0], 1];
       }
       this.scores[word] = score;
       this.words.push(word);
@@ -60,14 +62,14 @@ class Wordlist {
       return a.localeCompare(b);
     });
 
-    for (var i = 0; i < this.words.length; i++) {
+    for (let i = 0; i < this.words.length; i++) {
       var wlen = this.words[i].length;
       if (!this.len_idx.has(wlen)) {
         this.len_idx.set(wlen, i);
       }
       var bitmap = [];
-      var word = this.words[i];
-      for (var j=0; j < word.length; j++) {
+      word = this.words[i];
+      for (let j=0; j < word.length; j++) {
         bitmap.push(1 << char_to_bitmap(word[j]));
       }
       this.word_bitmaps.push(bitmap);
@@ -326,7 +328,7 @@ class Entry {
     return this.valid_words.map(function(i) {
       var word = self.wordlist.at(i);
       var score = self.wordlist.score(word);
-      return [word, '' + score]
+      return [word, '' + score];
     });
   }
 }
@@ -356,8 +358,8 @@ class Grid {
       var xincr = (dir == DIR_ACROSS) ? 1 : 0;
       var yincr = (dir == DIR_DOWN) ? 1 : 0;
 
-      for (var y = 0; y < this.height; y++) {
-        for (var x = 0; x < this.width; x++) {
+      for (let y = 0; y < this.height; y++) {
+        for (let x = 0; x < this.width; x++) {
 
           var is_black = rows[y][x] === BLOCK_CHAR;
           var start_of_row = (dir == DIR_ACROSS && x == 0) ||
@@ -368,7 +370,7 @@ class Grid {
             (start_of_row || rows[y - yincr][x - xincr] == BLOCK_CHAR) &&
             // next character not '#'?, i.e. exclude unchecked squares
             (x + xincr < this.width && y + yincr < this.height &&
-             rows[y + yincr][x + xincr] != BLOCK_CHAR))
+             rows[y + yincr][x + xincr] != BLOCK_CHAR));
 
           if (!start_of_entry)
             continue;

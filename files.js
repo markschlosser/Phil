@@ -15,9 +15,15 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
-function ScrambledError() {
-   this.message = 'Cannot open scrambled Across Lite files';
-   this.name = 'ScrambledError';
+class ScrambledError extends Error {
+  constructor(...params) {
+    super(...params);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ScrambledError);
+    }
+    this.name = "ScrambledError";
+    this.message = "Cannot open scrambled Across Lite files";
+  }
 }
 
 class PuzReader {
@@ -45,11 +51,11 @@ class PuzReader {
     let h = this.buf[0x2d];
     let scrambled = this.readShort(0x32);
     if (scrambled & 0x0004) {
-      throw new ScrambledError;
+      throw new ScrambledError();
     }
     json.size = {cols: w, rows: h};
     let grid = [];
-    for (var i = 0; i < w * h; i++) {
+    for (let i = 0; i < w * h; i++) {
       grid.push(String.fromCodePoint(this.buf[0x34 + i]));
     }
     json.grid = grid;
@@ -60,7 +66,7 @@ class PuzReader {
     var across = [];
     var down = [];
     var label = 1;
-    for (var i = 0; i < w * h; i++) {
+    for (let i = 0; i < w * h; i++) {
       if (grid[i] == '.') continue;
       var inc = 0;
       if (i % w == 0 || grid[i - 1] == '.') {
@@ -81,7 +87,7 @@ class PuzReader {
 
 class PuzWriter {
   constructor() {
-    this.buf = []
+    this.buf = [];
   }
 
   pad(n) {
@@ -143,7 +149,7 @@ class PuzWriter {
       this.buf.push(grid[i].codePointAt(0));  // Note: assumes grid is ISO-8859-1
     }
     this.grid = this.buf.length;
-    for (var i = 0; i < grid.length; i++) {
+    for (let i = 0; i < grid.length; i++) {
       var cp = grid[i].codePointAt(0);
       if (cp != BLACK_CP) cp = '-'.codePointAt(0);
       this.buf.push(cp);
@@ -162,12 +168,12 @@ class PuzWriter {
       const sp = across[i].split('. ');
       clues.push([2 * parseInt(sp[0]), sp[1]]);
     }
-    for (var i = 0; i < down.length; i++) {
+    for (let i = 0; i < down.length; i++) {
       const sp = down[i].split('. ');
       clues.push([2 * parseInt(sp[0]) + 1, sp[1]]);
     }
     clues.sort((a, b) => a[0] - b[0]);
-    for (var i = 0; i < clues.length; i++) {
+    for (let i = 0; i < clues.length; i++) {
       this.writeString(clues[i][1]);
     }
     this.writeString(json.notepad);
@@ -196,7 +202,7 @@ class PuzWriter {
       }
       ix += len + 1;
     }
-    for (var i = 0; i < this.numClues; i++) {
+    for (let i = 0; i < this.numClues; i++) {
       const len = this.strlen(ix);
       cksum = this.checksumRegion(ix, len, cksum);
       ix += len + 1;
@@ -220,7 +226,7 @@ class PuzWriter {
     var c_cib = this.checksumRegion(0x2c, 8, 0);
     this.setShort(0xe, c_cib);
     var cksum = this.checksumRegion(this.solution, this.w * this.h, c_cib);
-    var cksum = this.checksumRegion(this.grid, this.w * this.h, cksum);
+    cksum = this.checksumRegion(this.grid, this.w * this.h, cksum);
     cksum = this.checksumStrings(cksum);
     this.setShort(0x0, cksum);
     this.setMaskedChecksum(0, 0x49, 0x41, c_cib);
@@ -370,14 +376,14 @@ function writeFile(format) {
 
 function convertPuzzleToJSON() {
   let puz = {};
-  puz["author"] = xw.author;
-  puz["title"] = xw.title;
-  puz["size"] = {
+  puz.author = xw.author;
+  puz.title = xw.title;
+  puz.size = {
     "rows": xw.rows,
     "cols": xw.cols
   };
   // Translate clues to standard JSON puzzle format
-  puz["clues"] = {
+  puz.clues = {
     "across": [],
     "down": []
   };
@@ -393,7 +399,7 @@ function convertPuzzleToJSON() {
     }
   }
   // Read grid
-  puz["grid"] = [];
+  puz.grid = [];
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       puz.grid.push(xw.fill[i][j]);
@@ -413,7 +419,7 @@ function printPDF(style) {
     "fillOffset":     { "x": 12, "y": 17 },
     "labelFontSize":  7,
     "fillFontSize":   14,
-    "innerLineWidth": .5,
+    "innerLineWidth": 0.5,
     "outerLineWidth": 2
   };
   let clueFormat = {
@@ -478,9 +484,9 @@ function generatePDFClues() {
   let acrossClues = [], downClues = [];
   let byLabel = // this variable is a whole function...
     function (a, b) { // that is called when sort() compares values
-      if (a["label"] > b["label"]) {
+      if (a.label > b.label) {
         return 1;
-      } else if (a["label"] < b["label"]) {
+      } else if (a.label < b.label) {
         return -1;
       } else {
         return 0;
@@ -605,7 +611,7 @@ function layoutPDFClues(doc, style, format) {
                       { title: "", dataKey: "answer"}
                     ], acrossClues, clueFormat);
       // Print down clues
-      clueFormat["startY"] = doc.autoTable.previous.finalY + 10;
+      clueFormat.startY = doc.autoTable.previous.finalY + 10;
       doc.autoTable([ { title: "Down", dataKey: "label"},
                       { title: "", dataKey: "clue"},
                       { title: "", dataKey: "answer"}

@@ -44,8 +44,8 @@ const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 let history = [];
 let isSymmetrical = true;
 let isStrictMatching = false;
-let grid = undefined;
-let squares = undefined;
+let grid;
+let squares;
 let isMutated = false;
 let forced = null;
 // createNewPuzzle();
@@ -216,7 +216,7 @@ class Toolbar {
       "strictMatching": new Button("toggle-strict-matching"),
       "openWordlist": new Button("open-wordlist"),
       "autoFill": new Button("auto-fill")
-    }
+    };
   }
 }
 
@@ -253,7 +253,7 @@ class Notification {
 class Interface {
   constructor(rows, cols) {
     this.grid = new Grid(rows, cols);
-    this.sidebar;
+    // this.sidebar;
     this.toolbar = new Toolbar("toolbar");
 
     this.isSymmetrical = true;
@@ -267,7 +267,7 @@ class Interface {
     this.downEndIndex = rows;
     this.direction = ACROSS;
 
-    console.log("Grid UI created.")
+    console.log("Grid UI created.");
   }
 
   toggleDirection() {
@@ -295,12 +295,12 @@ current.update();
 // F U N C T I O N S
 
 function createNewPuzzle(rows, cols) {
-  xw["clues"] = {};
-  xw["title"] = DEFAULT_TITLE;
-  xw["author"] = DEFAULT_AUTHOR;
-  xw["rows"] = rows || DEFAULT_SIZE;
-  xw["cols"] = cols || xw.rows;
-  xw["fill"] = [];
+  xw.clues = {};
+  xw.title = DEFAULT_TITLE;
+  xw.author = DEFAULT_AUTHOR;
+  xw.rows = rows || DEFAULT_SIZE;
+  xw.cols = cols || xw.rows;
+  xw.fill = [];
   for (let i = 0; i < xw.rows; i++) {
     xw.fill.push("");
     for (let j = 0; j < xw.cols; j++) {
@@ -338,7 +338,7 @@ function createNewPuzzle(rows, cols) {
     square.addEventListener('click', mouseHandler);
   }
   grid.addEventListener('keydown', keyboardHandler);
-  console.log(`New ${xw.rows}×${xw.cols} puzzle created.`)
+  console.log(`New ${xw.rows}×${xw.cols} puzzle created.`);
 
   // if (!xw.isStandardSize()){
   //   new Notification("Warning, using non-standard grid sizes may cause problems with some features.", 10);
@@ -731,7 +731,7 @@ function generatePattern() {
   }
   isMutated = true;
   updateUI();
-  console.log("Generated layout.")
+  console.log("Generated layout.");
 }
 
 function toggleSymmetry() {
@@ -827,7 +827,7 @@ function runSolvePending() {
       case 'forced':
         if (solveWorkerState == 'running') {
           forced = e.data[1].split('\n');
-          forced.pop;  // strip empty last line
+          forced.pop();  // strip empty last line
           updateGridUI();
         }
         break;
@@ -843,7 +843,7 @@ function runSolvePending() {
         console.log('Autofill: Unexpected return,', e.data);
         break;
     }
-  }
+  };
 }
 
 function solveWorkerReady() {

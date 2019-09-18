@@ -18,8 +18,8 @@ New to this fork:
 TODO:
 * Help button for popup with keyboard shortcuts, credits, etc.
 * Dark mode
-* Rebus support
-* Autofill region
+* Rebus and circle support
+* Autofill bugfixes, autofill region, etc.
 
 ## Related repositories
 

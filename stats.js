@@ -174,7 +174,7 @@ class Stats {
     this.fullyConnectedSquaresPct = this.fullyConnectedSquares / this.squares;
     this.blocksPct = this.blocks / this.squares;
     this.avgWordLength = wordLengthTotal / this.words;
-    this.avgScrabblePoints = this.scrabbleTotal / this.letters;
+    this.avgScrabblePoints = (this.letters == 0) ? 0 : this.scrabbleTotal / this.letters;
   }
 }
 

@@ -26,4 +26,4 @@ onmessage = function(e) {
             postMessage(["ack_cancel"]);
             break;
     }
-}
+};
