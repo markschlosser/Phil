@@ -87,11 +87,11 @@ class Crossword {
 
 class Grid {
   constructor(rows, cols) {
-    document.getElementById("main").innerHTML = "";
+    document.getElementById("grid-container").innerHTML = "";
     let table = document.createElement("TABLE");
     table.setAttribute("id", "grid");
     table.setAttribute("tabindex", "1");
-    document.getElementById("main").appendChild(table);
+    document.getElementById("grid-container").appendChild(table);
 
     for (let i = 0; i < rows; i++) {
         let row = document.createElement("TR");
@@ -311,7 +311,7 @@ function createNewPuzzle(rows, cols) {
     }
   }
   updateInfoUI();
-  document.getElementById("main").innerHTML = "";
+  document.getElementById("grid-container").innerHTML = "";
   createGrid(xw.rows, xw.cols);
 
   isSymmetrical = true;
@@ -534,7 +534,7 @@ function createGrid(rows, cols) {
   table.setAttribute("id", "grid");
   table.setAttribute("tabindex", "1");
   // table.setAttribute("tabindex", "0");
-  document.getElementById("main").appendChild(table);
+  document.getElementById("grid-container").appendChild(table);
 
 	for (let i = 0; i < rows; i++) {
     	let row = document.createElement("TR");
