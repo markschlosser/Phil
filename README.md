@@ -18,8 +18,8 @@ New to this fork:
 
 TODO:
 * Rebus and circle support
-* Help button for popup with keyboard shortcuts, credits, etc.
-* Autofill bugfixes, UI integration, alternatives, autofill region, etc.
+* Mobile input and better layout/reactivity
+* Autofill bugfixes, UI integration, fill alternatives, autofill region, etc.
 
 ## Related repositories
 

@@ -27,10 +27,10 @@
   --secondary-color: rgb(157, 165, 179);
   --tertiary-color: rgb(116, 123, 133);
   --quaternary-color: rgb(75, 83, 99);
-  --highlight-color: rgba(90, 135, 220, 0.6);
+  --highlight-color: rgba(89, 147, 255, 0.6);
   --highlight-active-color: rgba(90, 135, 220, 0.4);
-  --highlight-border-color: rgb(79, 122, 202);
-  --highlight-heavy-color: rgb(42, 84, 209);
+  --highlight-border-color: rgb(61, 61, 227);
+  --highlight-heavy-color: rgb(50, 50, 255);
   --highlight-mono-color: rgba(62, 68, 80, 0.7);
   --highlight-active-mono-color: rgba(62, 68, 80, 0.5);
   --highlight-heavy-mono-color: rgb(58, 63, 74);
@@ -58,11 +58,10 @@ h1 {
   font-size: 9.5pt;
   font-weight: 400;
   color: var(--tertiary-color);
-  position: absolute;
+  margin-top: 20;
+  /* position: absolute;
   right: 5px;
-  bottom: 5px;
-  /*float: right;*/
-  /*margin: 2px 0 0 0;*/
+  bottom: 5px; */
 }
 
 #credits a {
@@ -210,13 +209,14 @@ kbd {
 .notification {
   font-size: 9.5pt;
   line-height: 11pt;
-  margin-top: 3px;
-  margin-right: 12px;
   padding: 12px;
   border-radius: 6px;
   background-color: var(--secondary-color);
   color: var(--quaternary-color);
-  float: left;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .notification h3 {
@@ -257,10 +257,12 @@ kbd {
 .notification:hover:after {
   color: var(--highlight-color);
   content: '\f00d';
-  float: right;
-  margin-left: 10px;
-  /*top: 10px;
-  right: 10px;*/
+  /* float: right; */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  /* margin-left: 10px; */
+
   font-family: FontAwesome;
   font-weight: 600;
   cursor: pointer;
@@ -338,6 +340,10 @@ kbd {
   float: left;
 }
 
+#toolbar .section {
+  cursor: pointer;
+}
+
 #toolbar button {
   width: 32px;
   height: 32px;
@@ -349,8 +355,9 @@ kbd {
   text-align: center;
   font-size: 14pt;
   padding: 6px 4px;
+  cursor: pointer;
   /*transition: all 0.1s;*/
-  margin: 2px 0;
+  /* margin: 2px 0; */
 }
 
 #toolbar button:focus {
@@ -372,7 +379,7 @@ kbd {
 }
 
 #toolbar button:hover {
-  background-color: var(--lt-blue);
+  background-color: var(--highlight-color);
 }
 
 #toolbar button:hover:after {

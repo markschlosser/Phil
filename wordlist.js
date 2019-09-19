@@ -25,7 +25,7 @@ let wordlist = [
   [], [], [], [], [], []
 ];
 
-openDefaultWordlist("https://raw.githubusercontent.com/keiranking/Phil/master/WL-SP.txt");
+openDefaultWordlist("https://raw.githubusercontent.com/jmviz/Phil/master/WL-SP.txt");
 
 //____________________
 // F U N C T I O N S
@@ -83,9 +83,9 @@ function openDefaultWordlist(url) {
       const words = textFile.responseText.split(/\s/g);
       addToWordlist(words);
       sortWordlist();
-      console.log("Loaded default wordlist.")
+      console.log("Loaded default wordlist.");
     }
-  }
+  };
   textFile.send(null);
 }
 
@@ -179,7 +179,7 @@ function matchWordStrict(square, direction, isFirstCall) {
             crossMatches = matchWordStrict(crossSquare, ACROSS, false);
           } else {
             crossMatches = matchFromWordlist(cross);
-          }          
+          }
           let letters = [];
           for (let c of crossMatches) {
             if (!letters.includes(c[index])) letters.push(c[index]);

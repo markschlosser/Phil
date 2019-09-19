@@ -238,7 +238,9 @@ class Notification {
     div.setAttribute("class", "notification");
     div.innerHTML = this.message;
     div.addEventListener('click', this.dismiss);
-    document.getElementById("footer").appendChild(div);
+    // document.getElementById("footer").appendChild(div);
+    document.body.appendChild(div);
+
   }
 
   update(message) {
@@ -776,9 +778,18 @@ function toggleDarkMode() {
   updateStatsUIColors();
 }
 
-// function toggleHelp() {
-//   document.getElementById("help").style.display = "none";
-// }
+function toggleHelp() {
+  document.getElementById("help").classList.toggle("hidden");
+  let helpButton = document.getElementById("toggle-help");
+  helpButton.classList.toggle("button-on");
+  if (helpButton.getAttribute("data-state") == "on") {
+    helpButton.setAttribute("data-state", "off");
+    helpButton.setAttribute("data-tooltip", "Show help");
+  } else {
+    helpButton.setAttribute("data-state", "on");
+    helpButton.setAttribute("data-tooltip", "Hide help");
+  }
+}
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
