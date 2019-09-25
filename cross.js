@@ -15,20 +15,18 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
-const keyboard = {
-  "a":      65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
-  "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
-  "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
-  "z":      90,
-  "block":  190, ".": 190,
-  "delete": 8,
-  "enter":  13,
-  "space":  32,
-  "left":   37,
-  "up":     38,
-  "right":  39,
-  "down":   40
-};
+const letterKeys = [
+  "a","b","c","d","e","f","g","h","i","j","k","l","m",
+  "n","o","p","q","r","s","t","u","v","w","x","y","z"
+];
+const ARROW_LEFT = "ArrowLeft";
+const ARROW_RIGHT = "ArrowRight";
+const ARROW_UP = "ArrowUp";
+const ARROW_DOWN = "ArrowDown";
+const arrowKeys = [ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ARROW_DOWN];
+const ENTER = "Enter";
+const DELETE = "Backspace";
+const SPACE = " ";
 const BLOCK = ".";
 const DASH = "-";
 const BLANK = " ";
@@ -373,32 +371,31 @@ function mouseHandler(e) {
 }
 
 function keyboardHandler(e) {
+  console.log(e.key);
   isMutated = false;
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
 
-  if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
+  if (letterKeys.includes(e.key.toLowerCase()) || e.key == SPACE) {
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1);
+    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + e.key.toUpperCase() + xw.fill[current.row].slice(current.col + 1);
     if (oldContent == BLOCK) {
       if (isSymmetrical) {
         xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
       }
     }
     // move the cursor
-    e = new Event('keydown');
     if (current.direction == ACROSS) {
-      e.which = keyboard.right;
+      e = new KeyboardEvent("keydown", {"key": ARROW_RIGHT});
     } else {
-      e.which = keyboard.down;
+      e = new KeyboardEvent("keydown", {"key": ARROW_DOWN});
     }
     isMutated = true;
   }
-  if (e.which == keyboard.block) {
+  if (e.key == BLOCK) {
       if (xw.fill[current.row][current.col] == BLOCK) { // if already block...
-        e = new Event('keydown');
-        e.which = keyboard.delete; // make it a white square
+        e = new KeyboardEvent("keydown", {"key": DELETE}); // make it a white square
       } else {
         xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLOCK + xw.fill[current.row].slice(current.col + 1);
         if (isSymmetrical) {
@@ -407,10 +404,10 @@ function keyboardHandler(e) {
       }
       isMutated = true;
   }
-  if (e.which == keyboard.enter) {
+  if (e.key == ENTER) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
-  if (e.which == keyboard.delete) {
+  if (e.key == DELETE) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
@@ -419,40 +416,39 @@ function keyboardHandler(e) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
         }
       } else { // move the cursor
-        e = new Event('keydown');
         if (current.direction == ACROSS) {
-          e.which = keyboard.left;
+          e = new KeyboardEvent("keydown", {"key": ARROW_LEFT});
         } else {
-          e.which = keyboard.up;
+          e = new KeyboardEvent("keydown", {"key": ARROW_UP});
         }
       }
       isMutated = true;
   }
-  if (e.which >= keyboard.left && e.which <= keyboard.down) {
+  if (arrowKeys.includes(e.key)) {
       e.preventDefault();
       const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       previousCell.classList.remove("active");
       let content = xw.fill[current.row][current.col];
-      switch (e.which) {
-        case keyboard.left:
+      switch (e.key) {
+        case ARROW_LEFT:
           if (current.direction == ACROSS || content == BLOCK) {
             current.col -= (current.col == 0) ? 0 : 1;
           }
           current.direction = ACROSS;
           break;
-        case keyboard.up:
+        case ARROW_UP:
           if (current.direction == DOWN || content == BLOCK) {
             current.row -= (current.row == 0) ? 0 : 1;
           }
           current.direction = DOWN;
           break;
-        case keyboard.right:
+        case ARROW_RIGHT:
           if (current.direction == ACROSS || content == BLOCK) {
             current.col += (current.col == xw.cols - 1) ? 0 : 1;
           }
           current.direction = ACROSS;
           break;
-        case keyboard.down:
+        case ARROW_DOWN:
           if (current.direction == DOWN || content == BLOCK) {
             current.row += (current.row == xw.rows - 1) ? 0 : 1;
           }
@@ -464,6 +460,24 @@ function keyboardHandler(e) {
       activeCell.classList.add("active");
   }
   updateUI();
+}
+
+function mobileKeyboardHandler(char) {
+  switch (char) {
+    case '⌫':
+      e = new KeyboardEvent("keydown", {"key": DELETE});
+      break;
+    case '␣':
+      e = new KeyboardEvent("keydown", {"key": SPACE});
+      break;
+    case '?':
+      e = new KeyboardEvent("keydown", {"key": ENTER});
+      break;
+    default:
+      e = new KeyboardEvent("keydown", {"key": char});
+
+  }
+  keyboardHandler(e);
 }
 
 function updateUI() {
@@ -709,7 +723,7 @@ function setAuthor() {
 }
 
 function suppressEnterKey(e) {
-  if (e.which == keyboard.enter) {
+  if (e.key == "Enter") {
     e.preventDefault();
     // console.log("Enter key behavior suppressed.");
   }

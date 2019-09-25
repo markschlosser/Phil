@@ -42,7 +42,7 @@
 
 body {
   font-family: var(--font-family-sans);
-  width: auto;
+  /* width: auto; */
   margin: 5px;
   background: var(--background-color);
   color: var(--primary-color);
@@ -92,6 +92,7 @@ h1 {
 }
 
 #grid {
+  table-layout: fixed;
   border: 2px solid var(--grid-border-color);
   border-collapse: collapse;
   /*border-spacing: 0;*/
@@ -115,15 +116,14 @@ h1 {
   outline: 3px solid var(--grid-unsat-color);
 }
 
-#grid td {
+/* #grid td {
   width: 35px;
   height: 36px;
   position: relative;
-  /*border: 1px solid var(--grid-border-color);*/
   border-left: 1px solid var(--grid-border-color);
   border-top: 1px solid var(--grid-border-color);
   padding-top: 6px;
-}
+} */
 
 #grid td.active {
   box-shadow: 0 0 12px 0px var(--highlight-heavy-mono-color);
@@ -200,11 +200,11 @@ kbd {
   margin: -2px 2px;
 }
 
-#grid-container {
+/* #grid-container {
   width: auto;
   float: left;
   margin-bottom: 10px;
-}
+} */
 
 .notification {
   font-size: 9.5pt;
@@ -526,4 +526,103 @@ kbd {
   font-size: 12;
   font-weight: 100;
   vertical-align: bottom;
+}
+
+#mobile-keyboard {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  /* background-color: #7fb77f; */
+  background-color: var(--highlight-mono-color);
+  flex-shrink: 0;
+  height: 30vw;
+  position: absolute;
+  bottom: 0px;
+  border-radius: 0px;
+}
+
+#mobile-keyboard .row {
+  display: flex;
+  justify-content: center;
+}
+
+#mobile-keyboard .key {
+  height: 10vw;
+  width: 10vw;
+  line-height: 10vw;
+  text-align: center;
+  vertical-align: middle;
+  background-color: var(--background-color);
+  border-radius: 20px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body {
+    width: auto;
+  }
+  #mobile-keyboard {
+    display: none;
+  }
+  #grid-container {
+    width: auto;
+    float: left;
+    margin-bottom: 10px;
+  }
+  #grid td {
+    width: 35px;
+    height: 36px;
+    position: relative;
+    border-left: 1px solid var(--grid-border-color);
+    border-top: 1px solid var(--grid-border-color);
+    padding-top: 6px;
+  }
+}
+
+@media not all and (hover: hover) and (pointer: fine) {
+  #stats {
+    display: none;
+  }
+  @media screen and (orientation: portrait) {
+    body {
+      margin: 0px;
+    }
+    #header {
+      display: none;
+    }
+
+    #grid td {
+      width: 15px;
+      height: 17px;
+      position: relative;
+      border-left: 1px solid var(--grid-border-color);
+      border-top: 1px solid var(--grid-border-color);
+      padding-top: 4px;
+      font-size: 8px;
+    }
+    .label {
+      font-size: 5px;
+      left: 1px;
+    }
+    .clue {
+      margin: 0;
+      padding: 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    #sidebar {
+      width: 85vw;
+      height: 30vh;
+      font-size: 10px;
+      /* float: none; */
+      margin-left: 0px;
+    }
+    .half-sidebar {
+      height: 100%;
+      display: inline-block;
+      width: 48%;
+      vertical-align: top;
+    }
+  }
 }

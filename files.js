@@ -477,7 +477,11 @@ function printPDF(style) {
       layoutPDFInfo(doc, style, infoFormat);
       break;
   }
-  doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    window.open(doc.output('bloburl'));
+  } else {
+    doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
+  }
 }
 
 function generatePDFClues() {

@@ -15,10 +15,10 @@ New to this fork:
 * Strict matching mode (fill suggestions filtered by crossers' constraints)
 * Stats
 * Dark mode
+* Rough mobile version
 
 TODO:
 * Rebus and circle support
-* Mobile input and better layout/reactivity
 * Autofill bugfixes, UI integration, fill alternatives, autofill region, etc.
 
 ## Related repositories
