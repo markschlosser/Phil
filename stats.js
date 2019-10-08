@@ -86,7 +86,7 @@ class Stats {
     this.blocks = 0;
     this.blocksPct = 0;
     this.words = xw.rows + xw.cols;
-    this.avgWordLength = 2 * this.openSquares / this.words;
+    this.avgWordLength = 2 * this.squares / this.words;
     this.scrabbleTotal = 0;
     this.avgScrabblePoints = 0;
   }

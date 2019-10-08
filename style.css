@@ -532,7 +532,6 @@ kbd {
   width: 100vw;
   display: flex;
   flex-direction: column;
-  /* background-color: #7fb77f; */
   background-color: var(--highlight-mono-color);
   flex-shrink: 0;
   height: 30vw;
@@ -576,6 +575,9 @@ kbd {
     border-top: 1px solid var(--grid-border-color);
     padding-top: 6px;
   }
+  .rebus {
+    font-size: 2px;
+  }
 }
 
 @media not all and (hover: hover) and (pointer: fine) {
@@ -589,6 +591,35 @@ kbd {
     #header {
       display: none;
     }
+
+/* Test/implement this for beginning of responsive mobile version: */
+    /* #grid {
+      font-size: 7vw;
+
+      background-color: var(--highlight-mono-color);
+      border-style: solid;
+      border-color: black;
+      border-width: 1px 0px 0px 1px;
+      border-collapse: collapse;
+    }
+
+    #grid tr {
+      display: flex;
+      justify-content: center;
+    }
+
+    #grid td {
+      height: 10vw;
+      width: 10vw;
+      position: relative;
+      line-height: 12vw;
+      text-align: center;
+      background-color: var(--background-color);
+      border-style: solid;
+      border-color: black;
+      border-width: 0px 1px 1px 0px;
+      overflow: hidden;
+    } */
 
     #grid td {
       width: 15px;

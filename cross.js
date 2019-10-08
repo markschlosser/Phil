@@ -66,9 +66,9 @@ class Crossword {
     this.fill = [];
     //
     for (let i = 0; i < this.rows; i++) {
-      this.fill.push("");
+      this.fill.push([]);
       for (let j = 0; j < this.cols; j++) {
-        this.fill[i] += BLANK;
+        this.fill[i].push(BLANK);
       }
     }
   }
@@ -305,9 +305,9 @@ function createNewPuzzle(rows, cols) {
   xw.cols = cols || xw.rows;
   xw.fill = [];
   for (let i = 0; i < xw.rows; i++) {
-    xw.fill.push("");
+    xw.fill.push([]);
     for (let j = 0; j < xw.cols; j++) {
-      xw.fill[i] += BLANK;
+      xw.fill[i].push(BLANK);
     }
   }
   updateInfoUI();
@@ -363,7 +363,7 @@ function mouseHandler(e) {
   }
   current.row = Number(activeCell.parentNode.dataset.row);
   current.col = Number(activeCell.dataset.col);
-  console.log("[" + current.row + "," + current.col + "]");
+  // console.log("[" + current.row + "," + current.col + "]");
   activeCell.classList.add("active");
 
   isMutated = false;
@@ -371,7 +371,7 @@ function mouseHandler(e) {
 }
 
 function keyboardHandler(e) {
-  console.log(e.key);
+  // console.log(e.key);
   isMutated = false;
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
@@ -379,10 +379,10 @@ function keyboardHandler(e) {
 
   if (letterKeys.includes(e.key.toLowerCase()) || e.key == SPACE) {
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + e.key.toUpperCase() + xw.fill[current.row].slice(current.col + 1);
+    xw.fill[current.row][current.col] = e.key.toUpperCase();
     if (oldContent == BLOCK) {
       if (isSymmetrical) {
-        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
+        xw.fill[symRow][symCol] = BLANK;
       }
     }
     // move the cursor
@@ -397,9 +397,9 @@ function keyboardHandler(e) {
       if (xw.fill[current.row][current.col] == BLOCK) { // if already block...
         e = new KeyboardEvent("keydown", {"key": DELETE}); // make it a white square
       } else {
-        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLOCK + xw.fill[current.row].slice(current.col + 1);
+        xw.fill[current.row][current.col] = BLOCK;
         if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLOCK + xw.fill[symRow].slice(symCol + 1);
+          xw.fill[symRow][symCol] = BLOCK;
         }
       }
       isMutated = true;
@@ -410,10 +410,10 @@ function keyboardHandler(e) {
   if (e.key == DELETE) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
+    xw.fill[current.row][current.col] = BLANK;
       if (oldContent == BLOCK) {
         if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
+          xw.fill[symRow][symCol] = BLANK;
         }
       } else { // move the cursor
         if (current.direction == ACROSS) {
@@ -632,7 +632,7 @@ function updateActiveWords() {
 }
 
 function getWordAt(row, col, direction, setCurrentWordIndices) {
-  let text = "";
+  let text = [];
   let [start, end] = [0, 0];
   let position = 0;
   if (direction == ACROSS) {
@@ -640,11 +640,10 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
     position = col;
   } else {
     for (let i = 0; i < xw.rows; i++) {
-      text += xw.fill[i][col];
+      text.push(xw.fill[i][col]);
     }
     position = row;
   }
-  text = text.split(BLANK).join(DASH);
   [start, end] = getWordIndices(text, direction, position);
   // Set global word indices if needed
   if (setCurrentWordIndices) {
@@ -654,7 +653,7 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
       [current.downStartIndex, current.downEndIndex] = [start, end];
     }
   }
-  return text.slice(start, end);
+  return text.slice(start, end).map(t => (t == BLANK) ? DASH : t).join("");
 }
 
 function getWordIndices(text, direction, position) {
@@ -745,8 +744,8 @@ function generatePattern() {
     const col = pattern[i][1];
     const symRow = xw.rows - 1 - row;
     const symCol = xw.cols - 1 - col;
-    xw.fill[row] = xw.fill[row].slice(0, col) + BLOCK + xw.fill[row].slice(col + 1);
-    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLOCK + xw.fill[symRow].slice(symCol + 1);
+    xw.fill[row][col] = BLOCK;
+    xw.fill[symRow][symRow] = BLOCK;
   }
   isMutated = true;
   updateUI();
@@ -807,7 +806,11 @@ function toggleHelp() {
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
-    xw.fill[i] = xw.fill[i].replace(/\w/g, ' '); // replace letters with spaces
+    for (let j = 0; j < xw.cols; j++) {
+      if (xw.fill[i][j] != BLOCK) {
+        xw.fill[i][j] = BLANK;
+      }
+    }
   }
   isMutated = true;
   updateUI();

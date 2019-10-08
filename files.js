@@ -45,6 +45,27 @@ class PuzReader {
     return result.join('');
   }
 
+  isExtra() {
+    return this.ix + 8 <= this.buf.length;
+  }
+
+  readExtra() {
+    let title = String.fromCharCode.apply(null, this.buf.slice(this.ix, this.ix + 4));
+    this.ix += 4;
+    let lengthBytes = this.buf.slice(this.ix, this.ix + 2);
+    let length = 1 + lengthBytes[0] + 256 * lengthBytes[1];
+    this.ix += 2;
+    let cksum = this.buf.slice(this.ix, this.ix + 2);
+    this.ix += 2;
+    let data = this.buf.slice(this.ix, this.ix + length - 1);
+    this.ix += length;
+    if (title == "RTBL") {
+      return {[title]: String.fromCharCode.apply(null, data)};
+    } else {
+      return {[title]: data};
+    }
+  }
+
   toJson() {
     let json = {};
     let w = this.buf[0x2c];
@@ -58,7 +79,6 @@ class PuzReader {
     for (let i = 0; i < w * h; i++) {
       grid.push(String.fromCodePoint(this.buf[0x34 + i]));
     }
-    json.grid = grid;
     this.ix = 0x34 + 2 * w * h;
     json.title = this.readString();
     json.author = this.readString();
@@ -80,7 +100,26 @@ class PuzReader {
       label += inc;
     }
     json.clues = {across: across, down: down};
-    // console.log(json);
+    json.notepad = this.readString();
+    let extras = {};
+    while (this.isExtra()){
+      Object.assign(extras, this.readExtra());
+    }
+    // console.log(extras);
+    if ("RTBL" in extras && "GRBS" in extras) {
+      let rebusTable = {};
+      for (let entry of extras.RTBL.replace(/\s+/g, '').slice(0, -1).split(';')) {
+        entry = entry.split(':');
+        rebusTable[entry[0]] = entry[1];
+      }
+      for (let i = 0; i < extras.GRBS.length; i++) {
+        if (extras.GRBS[i] != 0) {
+          grid[i] = rebusTable[extras.GRBS[i] - 1];
+        }
+      }
+    }
+    json.grid = grid;
+    // console.log(json.grid);
     return json;
   }
 }
@@ -316,15 +355,19 @@ function convertJSONToPuzzle(puz) {
   }
   xw.author = puz.author || DEFAULT_AUTHOR;
   // Update fill
-  new_fill = [];
+  let fill = [];
   for (let i = 0; i < xw.rows; i++) {
-    new_fill.push("");
+    fill.push([]);
     for (let j = 0; j < xw.cols; j++) {
       const k = (i * xw.cols) + j;
-      new_fill[i] += (puz.grid[k].length > 1) ? puz.grid[k][0].toUpperCase() : puz.grid[k].toUpperCase(); // Strip rebus answers to their first letter
+      fill[i].push(puz.grid[k].toUpperCase());
+      let div = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]').querySelector(".fill");
+      if (fill[i][j].length > 1) {
+        div.classList.add("rebus");
+      }
     }
   }
-  xw.fill = new_fill;
+  xw.fill = fill;
   isMutated = true;
 
   updateGridUI();
