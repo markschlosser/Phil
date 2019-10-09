@@ -555,6 +555,12 @@ kbd {
   border-radius: 20px;
 }
 
+.rebus {
+  font-size: 1px;
+  transform: scale(1.2, 3);
+  font-weight: 500;
+}
+
 @media (hover: hover) and (pointer: fine) {
   body {
     width: auto;
@@ -574,9 +580,6 @@ kbd {
     border-left: 1px solid var(--grid-border-color);
     border-top: 1px solid var(--grid-border-color);
     padding-top: 6px;
-  }
-  .rebus {
-    font-size: 2px;
   }
 }
 

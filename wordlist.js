@@ -120,72 +120,42 @@ function matchFromWordlist(word) {
 }
 
 function matchWordStrict(square, direction, isFirstCall) {
-  let matches = [];
-  if (direction == ACROSS) {
-    matches = matchFromWordlist(square.acrossWord);
-    let row = square.row;
-    let start = square.acrossStartIndex;
-    let end = square.acrossEndIndex;
-    for (let j = start; j < end; j++) {
-      if (xw.fill[row][j] == BLANK) {
-        let cross = getWordAt(row, j, DOWN);
-        if (!cross.split("").every(c => c == DASH)) {
-          let colText = "";
-          for (let i = 0; i < xw.rows; i++) {
-            colText += xw.fill[i][j];
-          }
-          let [crossStart, crossEnd] = getWordIndices(colText, DOWN, row);
-          let index = row - crossStart;
-          let crossMatches = [];
-          let crossSquare = {
-            "downWord": cross,
-            "col":j,
-            "downStartIndex": crossStart,
-            "downEndIndex": crossEnd
-          };
-          if (isFirstCall) {
-            crossMatches = matchWordStrict(crossSquare, DOWN, false);
-          } else {
-            crossMatches = matchFromWordlist(cross);
-          }
-          let letters = [];
-          for (let c of crossMatches) {
-            if (!letters.includes(c[index])) letters.push(c[index]);
-          }
-          matches = matches.filter(m => letters.includes(m[j-start]));
+  let [oppDir, axis, oppAxis] =
+    (direction == ACROSS) ? [DOWN, "row", "col"] : [ACROSS, "col", "row"];
+  let matches = matchFromWordlist(square[direction + "Word"]);
+  let start = square[direction + "StartIndex"];
+  let end = square[direction + "EndIndex"];
+  let lineIndex = square[axis];
+  let line = getLine(direction, lineIndex);
+  let array = line.slice(start, end);
+  for (let k = start; k < end; k++) {
+    if (line[k] == BLANK) {
+      let arrayIndex = k - start;
+      let index = getStringIndex(array, arrayIndex);
+      let cross = (direction == ACROSS) ? getWordAt(lineIndex, k, oppDir): getWordAt(k, lineIndex, oppDir);
+      if (!cross.split("").every(c => c == DASH)) {
+        let crossLine = getLine(oppDir, k);
+        let [crossStart, crossEnd] = getWordIndices(crossLine, oppDir, lineIndex);
+        let crossArray = crossLine.slice(crossStart, crossEnd);
+        let crossArrayIndex = lineIndex - crossStart;
+        let crossIndex = getStringIndex(crossArray, crossArrayIndex);
+        let crossSquare = {};
+        crossSquare[oppDir + "Word"] = cross;
+        crossSquare[oppAxis] = k;
+        crossSquare[oppDir + "StartIndex"] = crossStart;
+        crossSquare[oppDir + "EndIndex"] = crossEnd;
+        if (isFirstCall) {
+          crossMatches = matchWordStrict(crossSquare, oppDir, false);
+        } else {
+          crossMatches = matchFromWordlist(cross);
         }
-      }
-    }
-  } else {
-    matches = matchFromWordlist(square.downWord);
-    let col = square.col;
-    let start = square.downStartIndex;
-    let end = square.downEndIndex;
-    for (let i = start; i < end; i++) {
-      if (xw.fill[i][col] == BLANK) {
-        let cross = getWordAt(i, col, ACROSS);
-        if (!cross.split("").every(c => c == DASH)) {
-          let rowText = xw.fill[i];
-          let [crossStart, crossEnd] = getWordIndices(rowText, ACROSS, col);
-          let index = col - crossStart;
-          let crossMatches = [];
-          let crossSquare = {
-            "acrossWord": cross,
-            "row":i,
-            "acrossStartIndex": crossStart,
-            "acrossEndIndex": crossEnd
-          };
-          if (isFirstCall) {
-            crossMatches = matchWordStrict(crossSquare, ACROSS, false);
-          } else {
-            crossMatches = matchFromWordlist(cross);
+        let letters = [];
+        for (let crossMatch of crossMatches) {
+          if (!letters.includes(crossMatch[crossIndex])) {
+            letters.push(crossMatch[crossIndex]);
           }
-          let letters = [];
-          for (let c of crossMatches) {
-            if (!letters.includes(c[index])) letters.push(c[index]);
-          }
-          matches = matches.filter(m => letters.includes(m[i-start]));
         }
+        matches = matches.filter(m => letters.includes(m[index]));
       }
     }
   }

@@ -631,20 +631,34 @@ function updateActiveWords() {
   // console.log(current.acrossWord.split(DASH).join("*"));
 }
 
+function getRow(i) {
+  return xw.fill[i];
+}
+
+function getCol(j) {
+  let col = [];
+  for (let i = 0; i < xw.rows; i++) {
+    col.push(xw.fill[i][j]);
+  }
+  return col;
+}
+
+function getLine(direction, index) {
+  return (direction == ACROSS) ? getRow(index) : getCol(index);
+}
+
 function getWordAt(row, col, direction, setCurrentWordIndices) {
-  let text = [];
+  let line = [];
   let [start, end] = [0, 0];
   let position = 0;
   if (direction == ACROSS) {
-    text = xw.fill[row];
+    line = getRow(row);
     position = col;
   } else {
-    for (let i = 0; i < xw.rows; i++) {
-      text.push(xw.fill[i][col]);
-    }
+    line = getCol(col);
     position = row;
   }
-  [start, end] = getWordIndices(text, direction, position);
+  [start, end] = getWordIndices(line, direction, position);
   // Set global word indices if needed
   if (setCurrentWordIndices) {
     if (direction == ACROSS) {
@@ -653,16 +667,20 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
       [current.downStartIndex, current.downEndIndex] = [start, end];
     }
   }
-  return text.slice(start, end).map(t => (t == BLANK) ? DASH : t).join("");
+  return line.slice(start, end).map(t => (t == BLANK) ? DASH : t).join("");
 }
 
-function getWordIndices(text, direction, position) {
-  let start = text.slice(0, position).lastIndexOf(BLOCK);
+function getWordIndices(line, direction, position) {
+  let start = line.slice(0, position).lastIndexOf(BLOCK);
   start = (start == -1) ? 0 : start + 1;
   let limit = (direction == ACROSS) ? xw.cols : xw.rows;
-  let end = text.slice(position, limit).indexOf(BLOCK);
+  let end = line.slice(position, limit).indexOf(BLOCK);
   end = (end == -1) ? limit : Number(position) + end;
   return [start, end];
+}
+
+function getStringIndex(array, arrayIndex) {
+  return array.slice(0, arrayIndex).reduce((accum, elem) => accum + elem.length, 0);
 }
 
 function updateGridHighlights() {
