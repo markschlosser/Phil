@@ -208,6 +208,7 @@ class Toolbar {
       "exportPDF": new Button("print-puzzle"),
       "exportNYT": new Button("print-NYT-submission"),
       "export": new Button("export"),
+      "enter-rebus": new Button("enter-rebus"),
       "quickLayout": new Button("quick-layout"),
       "freezeLayout": new Button("toggle-freeze-layout"),
       "clearFill": new Button("clear-fill"),
@@ -352,6 +353,8 @@ function createNewCustomPuzzle() {
   let rows = parseInt(document.getElementById("custom-rows").value);
   let cols = parseInt(document.getElementById("custom-cols").value);
   createNewPuzzle(rows, cols);
+  document.getElementById("new-grid-menu").querySelector(".default").classList.remove("default");
+  document.getElementById("new-grid-custom").classList.add("default");
 }
 
 function mouseHandler(e) {
@@ -376,10 +379,12 @@ function keyboardHandler(e) {
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
+  let symCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
   if (letterKeys.includes(e.key.toLowerCase()) || e.key == SPACE) {
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row][current.col] = e.key.toUpperCase();
+    activeCell.lastChild.classList.remove("rebus");
     if (oldContent == BLOCK) {
       if (isSymmetrical) {
         xw.fill[symRow][symCol] = BLANK;
@@ -398,8 +403,10 @@ function keyboardHandler(e) {
         e = new KeyboardEvent("keydown", {"key": DELETE}); // make it a white square
       } else {
         xw.fill[current.row][current.col] = BLOCK;
+        activeCell.lastChild.classList.remove("rebus");
         if (isSymmetrical) {
           xw.fill[symRow][symCol] = BLOCK;
+          symCell.lastChild.classList.remove("rebus");
         }
       }
       isMutated = true;
@@ -411,6 +418,7 @@ function keyboardHandler(e) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row][current.col] = BLANK;
+    activeCell.lastChild.classList.remove("rebus");
       if (oldContent == BLOCK) {
         if (isSymmetrical) {
           xw.fill[symRow][symCol] = BLANK;
@@ -763,7 +771,7 @@ function generatePattern() {
     const symRow = xw.rows - 1 - row;
     const symCol = xw.cols - 1 - col;
     xw.fill[row][col] = BLOCK;
-    xw.fill[symRow][symRow] = BLOCK;
+    xw.fill[symRow][symCol] = BLOCK;
   }
   isMutated = true;
   updateUI();
@@ -969,6 +977,30 @@ function doDefault(e) {
     let d = menu.querySelector(".default");
     d.click();
   }
+}
+
+function enterRebus() {
+  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  let fill = activeCell.lastChild;
+  let oldContent = xw.fill[current.row][current.col];
+  xw.fill[current.row][current.col] = document.getElementById("rebus-input").value.toUpperCase();
+  fill.classList.add("rebus");
+  let symRow = xw.rows - 1 - current.row;
+  let symCol = xw.cols - 1 - current.col;
+  if (oldContent == BLOCK) {
+    if (isSymmetrical) {
+      xw.fill[symRow][symCol] = BLANK;
+    }
+  }
+  updateUI();
+  document.getElementById("enter-rebus-menu").classList.add("hidden");
+  if (current.direction == ACROSS) {
+    e = new KeyboardEvent("keydown", {"key": ARROW_RIGHT});
+  } else {
+    e = new KeyboardEvent("keydown", {"key": ARROW_DOWN});
+  }
+  keyboardHandler(e);
+  grid.focus();
 }
 
 function randomNumber(min, max) {

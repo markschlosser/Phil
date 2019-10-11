@@ -442,9 +442,21 @@ kbd {
   clear: both;
 }
 
-#toolbar .menu form {
-  display: block;
-  margin: 0px 0px 0px 35px;
+#new-grid-custom {
+  display:inline !important;
+}
+
+#new-grid-custom:after {
+  min-width: 50px !important;
+}
+
+#custom-grid-form {
+  margin: 0px 0px 0px 60px;
+  display: inline;
+}
+
+#custom-grid-form input {
+  width: 35px;
 }
 
 #toolbar .menu button:after {
@@ -556,9 +568,21 @@ kbd {
 }
 
 .rebus {
-  font-size: 1px;
+  font-size: 6px;
   transform: scale(1.2, 3);
   font-weight: 500;
+}
+
+#enter-rebus-menu h4 {
+  display: inline;
+}
+#enter-rebus-form {
+  margin-left: 10px;
+  display: inline;
+}
+
+.rebus-input {
+  text-transform: uppercase;
 }
 
 @media (hover: hover) and (pointer: fine) {

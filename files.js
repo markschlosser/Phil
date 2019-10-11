@@ -185,7 +185,7 @@ class PuzWriter {
     const BLOCK_CP = '.'.codePointAt(0);
     this.solution = this.buf.length;
     for (var i = 0; i < grid.length; i++) {
-      this.buf.push(grid[i].codePointAt(0));  // Note: assumes grid is ISO-8859-1
+      this.buf.push(grid[i][0].codePointAt(0));  // Note: assumes grid is ISO-8859-1
     }
     this.grid = this.buf.length;
     for (let i = 0; i < grid.length; i++) {
@@ -216,6 +216,10 @@ class PuzWriter {
       this.writeString(clues[i][1]);
     }
     this.writeString(json.notepad);
+  }
+
+  writeExtras(json) {
+    
   }
 
   checksumRegion(base, len, cksum) {
@@ -587,9 +591,16 @@ function layoutPDFGrid(doc, format, isFilled) {
   }
   // Fill grid
   if (isFilled) {
-    doc.setFontSize(format.fillFontSize);
+    // doc.setFontSize(format.fillFontSize);
     for (let i = 0; i < xw.rows; i++) {
       for (let j = 0; j < xw.cols; j++) {
+        if (xw.fill[i][j].length == 1) {
+          doc.setFontSize(format.fillFontSize);
+        } else if (xw.fill[i][j].length < 5) {
+          doc.setFontSize(format.fillFontSize/2);
+        } else {
+          doc.setFontSize(format.fillFontSize/3);
+        }
         doc.text(format.gridOrigin.x + (j * format.squareSize) + format.fillOffset.x,
                  format.gridOrigin.y + (i * format.squareSize) + format.fillOffset.y,
                  xw.fill[i][j], null, null, "center");

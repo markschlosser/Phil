@@ -28,7 +28,7 @@
         <button id="new-grid-21" type="button" data-tooltip="NYT Sunday (21×21)" onmouseup="setDefault(event)" onclick="createNewPuzzle(21,21)">
           <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
         </button>
-        <button id="new-grid-custom" type="submit" data-tooltip="Custom grid:" form="custom-grid-form" onmouseup="setDefault(event)">
+        <button id="new-grid-custom" type="submit" data-tooltip="Custom:" form="custom-grid-form" onmouseup="setDefault(event)">
           <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
         </button>
         <form id="custom-grid-form" action="javascript:void(0);" onsubmit="createNewCustomPuzzle()">
@@ -68,6 +68,16 @@
     <div class="divider"></div>
 
     <div class="section">
+      <div id="enter-rebus-menu" class="menu hidden" onmouseleave="hideMenu(event)">
+        <h4>Enter rebus:</h4>
+        <form id="enter-rebus-form" action="javascript:void(0);" onsubmit="enterRebus()">
+          <input type="text" class="rebus-input" name="rebus-input" id="rebus-input" size="15">
+        </form>
+      </div>
+      <button id="enter-rebus" type="submit" form="enter-rebus-form" data-tooltip="Enter rebus" onmouseenter="showMenu(event)">
+        <i class="fa fa-eye fa-fw" aria-hidden="true"></i>
+      </button>
+
       <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
         <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
       </button>
@@ -178,7 +188,6 @@
     </div>
   </div>
 
-  <!-- <div id="mobile-keyboard"></div> -->
   <div id="mobile-keyboard">
     <div class="row">
       <div class="key" onmousedown="mobileKeyboardHandler('q')">q</div>

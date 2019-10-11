@@ -105,11 +105,13 @@ class Stats {
     for (let i = 0; i < xw.rows; i++) {
       for (let j = 0; j < xw.cols; j++) {
         let fill = xw.fill[i][j];
-        for (let k = 0; k < this.alphabet.length; k++) {
-          if (fill == this.alphabet[k]) {
-            this.letters++;
-            this.letterCounts[k]++;
-            this.scrabbleTotal += this.scrabblePoints[k];
+        for (let f = 0; f < fill.length; f++) {
+          for (let k = 0; k < this.alphabet.length; k++) {
+            if (fill[f] == this.alphabet[k]) {
+              this.letters++;
+              this.letterCounts[k]++;
+              this.scrabbleTotal += this.scrabblePoints[k];
+            }
           }
         }
         if (fill == BLOCK) {
