@@ -15,8 +15,6 @@
       onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1>
   </div>
 
-  <div id="main">
-
   <div id="toolbar">
 
     <div class="section">
@@ -70,7 +68,7 @@
     <div class="section">
       <div id="enter-rebus-menu" class="menu hidden" onmouseleave="hideMenu(event)">
         <h4>Enter rebus:</h4>
-        <form id="enter-rebus-form" action="javascript:void(0);" onsubmit="enterRebus()">
+        <form id="enter-rebus-form" action="javascript:void(0);" onsubmit="enterRebus(event)">
           <input type="text" class="rebus-input" name="rebus-input" id="rebus-input" size="15">
         </form>
       </div>
@@ -121,8 +119,6 @@
   </div>
 
   <div id="grid-container"></div>
-
-  </div>
 
   <div id="sidebar">
     <div class="half-sidebar">
@@ -177,8 +173,9 @@
       <h3>Keyboard Shortcuts</h3>
       <table>
         <!-- <tr> <td>Undo</td> <td><kbd>Ctrl</kbd><kbd>Z</kbd></td> </tr> -->
-        <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
         <tr> <td>Toggle block square</td> <td><kbd>.</kbd></td> </tr>
+        <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
+        <tr> <td>Enter rebus</td> <td><kbd>Esc</kbd></td> </tr>
       </table>
     </div>
     <div id="credits">
@@ -190,7 +187,7 @@
 
   <div id="mobile-keyboard">
     <div class="row">
-      <div class="key" onmousedown="mobileKeyboardHandler('q')">q</div>
+      <div class="key" onclick="mobileKeyboardHandler('q')">q</div>
       <div class="key" onclick="mobileKeyboardHandler('w')">w</div>
       <div class="key" onclick="mobileKeyboardHandler('e')">e</div>
       <div class="key" onclick="mobileKeyboardHandler('r')">r</div>
@@ -223,7 +220,7 @@
       <div class="key" onclick="mobileKeyboardHandler('n')">n</div>
       <div class="key" onclick="mobileKeyboardHandler('m')">m</div>
       <div class="key" onclick="mobileKeyboardHandler('.')">.</div>
-      <div class="key" onclick="mobileKeyboardHandler('?')">?</div>
+      <div class="key" onclick="mobileKeyboardHandler('👁️')">👁️</div>
     </div>
   </div>
 

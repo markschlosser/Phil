@@ -9,17 +9,19 @@ Phil helps you make crosswords, using client-side JavaScript.
 * Create a New York Times submission in seconds.
 
 New to this fork:
-* [Bob Copeland's](https://github.com/bcopeland) pure JS auto filler
+* [Bob Copeland's](https://github.com/bcopeland) JS auto filler
 * NYT Sunday grid (21×21) support
 * Custom grid sizes (PDF exports will be wonky)
 * Strict matching mode (fill suggestions filtered by crossers' constraints)
 * Stats
 * Dark mode
-* Rough mobile version
+* Mobile support
+* Rebus support
 
 TODO:
-* Rebus and circle support
-* Autofill bugfixes, UI integration, fill alternatives, autofill region, etc.
+* Circle/shade support
+* Autofill bugfixes and improvements
+* Better responsive layout
 
 ## Acknowledgements
 

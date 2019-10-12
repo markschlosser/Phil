@@ -576,6 +576,7 @@ kbd {
 #enter-rebus-menu h4 {
   display: inline;
 }
+
 #enter-rebus-form {
   margin-left: 10px;
   display: inline;
@@ -660,6 +661,11 @@ kbd {
     .label {
       font-size: 5px;
       left: 1px;
+    }
+    .rebus {
+      font-size: 3px;
+      transform: scale(1.2, 2);
+      font-weight: 500;
     }
     .clue {
       margin: 0;

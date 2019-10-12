@@ -26,6 +26,7 @@ const ARROW_DOWN = "ArrowDown";
 const arrowKeys = [ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ARROW_DOWN];
 const ENTER = "Enter";
 const DELETE = "Backspace";
+const ESCAPE = "Escape";
 const SPACE = " ";
 const BLOCK = ".";
 const DASH = "-";
@@ -411,6 +412,9 @@ function keyboardHandler(e) {
       }
       isMutated = true;
   }
+  if (e.key == ESCAPE) {
+    enterRebus(e);
+  }
   if (e.key == ENTER) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
@@ -478,14 +482,17 @@ function mobileKeyboardHandler(char) {
     case '␣':
       e = new KeyboardEvent("keydown", {"key": SPACE});
       break;
-    case '?':
-      e = new KeyboardEvent("keydown", {"key": ENTER});
+    case '👁️':
+      e = new KeyboardEvent("keydown", {"key": ESCAPE});
       break;
     default:
       e = new KeyboardEvent("keydown", {"key": char});
 
   }
   keyboardHandler(e);
+  if (char != '👁️') {
+    grid.focus();
+  }
 }
 
 function updateUI() {
@@ -979,11 +986,17 @@ function doDefault(e) {
   }
 }
 
-function enterRebus() {
+function enterRebus(e) {
+  let rebusInput = document.getElementById("rebus-input");
+  if (rebusInput.value == "" || e.key == ESCAPE) {
+    showMenu({"target": document.getElementById("enter-rebus")});
+    rebusInput.focus();
+    return;
+  }
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   let fill = activeCell.lastChild;
   let oldContent = xw.fill[current.row][current.col];
-  xw.fill[current.row][current.col] = document.getElementById("rebus-input").value.toUpperCase();
+  xw.fill[current.row][current.col] = rebusInput.value.toUpperCase();
   fill.classList.add("rebus");
   let symRow = xw.rows - 1 - current.row;
   let symCol = xw.cols - 1 - current.col;

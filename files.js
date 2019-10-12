@@ -52,13 +52,10 @@ class PuzReader {
   readExtra() {
     let title = String.fromCharCode.apply(null, this.buf.slice(this.ix, this.ix + 4));
     this.ix += 4;
-    let lengthBytes = this.buf.slice(this.ix, this.ix + 2);
-    let length = 1 + lengthBytes[0] + 256 * lengthBytes[1];
-    this.ix += 2;
-    let cksum = this.buf.slice(this.ix, this.ix + 2);
-    this.ix += 2;
-    let data = this.buf.slice(this.ix, this.ix + length - 1);
-    this.ix += length;
+    let length = this.readShort(this.ix);
+    this.ix += 4; // skip over cksum
+    let data = this.buf.slice(this.ix, this.ix + length);
+    this.ix += length + 1;
     if (title == "RTBL") {
       return {[title]: String.fromCharCode.apply(null, data)};
     } else {
@@ -218,10 +215,6 @@ class PuzWriter {
     this.writeString(json.notepad);
   }
 
-  writeExtras(json) {
-    
-  }
-
   checksumRegion(base, len, cksum) {
     for (var i = 0; i < len; i++) {
       cksum = (cksum >> 1) | ((cksum & 1) << 15);
@@ -281,11 +274,65 @@ class PuzWriter {
     this.setMaskedChecksum(3, 0x45, 0x44, c_part);
   }
 
+  writeExtras(json) {
+    let grid = json.grid;
+    if (grid.some(g => g.length > 1)) {
+      this.writeExtraTitle("GRBS");
+      this.pad(4);
+      let grbsStart = this.buf.length;
+      let rebusList = [];
+      for (let g of grid) {
+        if (g.length > 1) {
+          if (!rebusList.includes(g)) {
+            rebusList.push(g);
+          }
+          this.buf.push(rebusList.indexOf(g) + 2);
+        } else {
+          this.buf.push(0);
+        }
+      }
+      let grbsLength = this.buf.length - grbsStart;
+      this.setShort(grbsStart - 4, grbsLength);
+      let grbsCksum = this.checksumRegion(grbsStart, grbsLength, 0);
+      this.setShort(grbsStart - 2, grbsCksum);
+      this.buf.push(0);
+      this.writeExtraTitle("RTBL");
+      this.pad(4);
+      let rtblStart = this.buf.length;
+      let rtbl = this.generateRTBL(rebusList);
+      this.writeString(rtbl);
+      let rtblLength = this.buf.length - 1 - rtblStart;
+      this.setShort(rtblStart - 4, rtblLength);
+      let rtblCksum = this.checksumRegion(rtblStart, rtblLength, 0);
+      this.setShort(rtblStart - 2, rtblCksum);
+    }
+  }
+
+  generateRTBL(rebusList) {
+    let rtbl = "";
+    let key = "";
+    for (let i = 0; i < rebusList.length; i++) {
+      key = (i + 1).toString();
+      if (key.length == 1) {
+        key = " " + key;
+      }
+      rtbl = rtbl.concat(key + ":" + rebusList[i] + ";");
+    }
+    return rtbl;
+  }
+
+  writeExtraTitle(title) {
+    for (let char of title) {
+      this.buf.push(char.codePointAt(0));
+    }
+  }
+
   toPuz(json) {
     this.writeHeader(json);
     this.writeFill(json);
     this.writeStrings(json);
     this.computeChecksums();
+    this.writeExtras(json);
     return new Uint8Array(this.buf);
   }
 }
