@@ -289,8 +289,6 @@ class Interface {
   }
 }
 
-// new Notification(document.getElementById("shortcuts").innerHTML, 300);
-
 let xw = new Crossword(); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 current.update();
@@ -877,7 +875,22 @@ function runSolvePending() {
     }
   }
   //console.log(wordlist_str);
-  let puz = xw.fill.join('\n') + '\n';
+  let puz = '';
+  let hasRebus = false;
+  for (let row of xw.fill) {
+    for (let squareFill of row) {
+      if (squareFill.length > 1) {
+        hasRebus = true;
+      }
+      puz = puz + squareFill;
+    }
+    puz = puz + '\n';
+  }
+  if (hasRebus) {
+    new Notification("Warning, autofill does not currently support rebus grids.", 10);
+    console.log("Autofill cancelled: grid contains rebus.");
+    return;
+  }
   solveWorker.postMessage(['run', solveWordlist, puz, isQuick]);
   solveWorkerState = 'running';
   solveWorker.onmessage = function(e) {
@@ -888,8 +901,13 @@ function runSolvePending() {
             console.log("Autofill: Solution found.");
             grid.classList.add("sat");
           } else {
-            xw.fill = e.data[1].split('\n');
-            xw.fill.pop();  // strip empty last line
+            let solution = e.data[1].split('\n');
+            solution.pop(); // strip empty last line
+            for (let i = 0; i < solution.length; i++) {
+              for (let j = 0; j < solution[i].length; j++) {
+                xw.fill[i][j] = solution[i][j];
+              }
+            }
             updateGridUI();
             updateStatsUI();
             grid.focus();
