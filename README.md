@@ -20,6 +20,8 @@ New to this fork:
 
 TODO:
 * Circle/shade support
+* .xpf and .xd support
+* Undo/redo
 * Autofill bugfixes and improvements
 * Better responsive layout
 

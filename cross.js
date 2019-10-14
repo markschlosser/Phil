@@ -887,7 +887,7 @@ function runSolvePending() {
     puz = puz + '\n';
   }
   if (hasRebus) {
-    new Notification("Warning, autofill does not currently support rebus grids.", 10);
+    new Notification("Autofill does not currently support rebus grids.", 10);
     console.log("Autofill cancelled: grid contains rebus.");
     return;
   }
