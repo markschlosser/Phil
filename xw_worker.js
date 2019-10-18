@@ -9,11 +9,11 @@ onmessage = function(e) {
             grid = grid.replace(/\./g, "#");
             grid = grid.replace(/ /g, ".");
 
-            console.log("fill " + grid);
+            console.log("fill:\n" + grid);
             let wordlist = new module.exports.wordlist(words);
             let filler = new module.exports.filler(grid, wordlist);
             let result = filler.fill();
-            console.log("result: " + result);
+            console.log("result:\n" + result);
             if (result.indexOf(".") == -1) {
               result = result.replace(/\./g, " ");
               result = result.replace(/#/g, ".");

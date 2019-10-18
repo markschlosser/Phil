@@ -31,7 +31,7 @@ openDefaultWordlist("https://raw.githubusercontent.com/jmviz/Phil/master/WL-SP.t
 // F U N C T I O N S
 
 function addToWordlist(newWords) {
-  for (i = 0; i < newWords.length; i++) {
+  for (let i = 0; i < newWords.length; i++) {
     const word = newWords[i].trim().toUpperCase();
     if (word.length < wordlist.length) { // Make sure we don't access outside the wordlist array
       wordlist[word.length].push(word);
@@ -176,7 +176,7 @@ function updateMatchesUI() {
     acrossMatches = matchFromWordlist(current.acrossWord);
     downMatches = matchFromWordlist(current.downWord);
   }
-  for (i = 0; i < acrossMatches.length; i++) {
+  for (let i = 0; i < acrossMatches.length; i++) {
     let li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
     li.className = "";
@@ -184,7 +184,7 @@ function updateMatchesUI() {
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
   }
-  for (i = 0; i < downMatches.length; i++) {
+  for (let i = 0; i < downMatches.length; i++) {
     let li = document.createElement("LI");
     li.innerHTML = downMatches[i].toLowerCase();
     li.className = "";
@@ -195,26 +195,22 @@ function updateMatchesUI() {
 
 function fillGridWithMatch(e) {
   const li = e.currentTarget;
-  const fill = li.innerHTML.toUpperCase();
+  const match = li.innerHTML.toUpperCase();
+  let k = 0;
   const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
-
   if (dir == ACROSS) {
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.acrossStartIndex) + fill + xw.fill[current.row].slice(current.acrossEndIndex);
-    for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
-      const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
-      square.querySelector(".fill").innerHTML = fill[i - current.acrossStartIndex];
+    for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
+      xw.fill[current.row][j] = match.slice(k, k + xw.fill[current.row][j].length);
+      k += xw.fill[current.row][j].length;
     }
   } else {
-    for (let j = current.downStartIndex; j < current.downEndIndex; j++) {
-      xw.fill[j] = xw.fill[j].slice(0, current.col) + fill[j - current.downStartIndex] + xw.fill[j].slice(current.col + 1);
-      const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
-      square.querySelector(".fill").innerHTML = fill[j - current.downStartIndex];
+    for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
+      xw.fill[i][current.col] = match.slice(k, k + xw.fill[i][current.col].length);
+      k += xw.fill[i][current.col].length;
     }
   }
   isMutated = true;
   console.log("Filled '" + li.innerHTML + "' going " + dir);
-  // updateActiveWords();
-  // updateMatchesUI();
   updateUI();
   grid.focus();
 }

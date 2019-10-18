@@ -597,7 +597,7 @@ class Grid {
     while (stack.length) {
       if (this.fillStep(stack))
         return 1;
-      console.log(" => " + this.toString());
+      console.log("=>\n" + this.toString());
     }
     return 0;
   }

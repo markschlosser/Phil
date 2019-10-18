@@ -880,21 +880,27 @@ function runSolvePending() {
   }
   //console.log(wordlist_str);
   let puz = '';
-  let hasRebus = false;
-  for (let row of xw.fill) {
-    for (let squareFill of row) {
-      if (squareFill.length > 1) {
-        hasRebus = true;
+  let isUnfillable = false;
+  let rebusIndexes = [];
+  let k = 0;
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      if (xw.fill[i][j].length > 1) {
+        rebusIndexes.push(k);
+        if ((getWordAt(i, j, ACROSS) + getWordAt(i, j, DOWN)).includes(DASH)) {
+          isUnfillable = true;
+        }
       }
-      puz = puz + squareFill;
+      puz = puz + xw.fill[i][j][0];
+      k++;
     }
     puz = puz + '\n';
   }
-  // if (hasRebus) {
-  //   new Notification("Autofill does not currently support rebus grids.", 10);
-  //   console.log("Autofill cancelled: grid contains rebus.");
-  //   return;
-  // }
+  if (isUnfillable) {
+    new Notification("Autofill requires the across and down answers for each rebus square to be completely filled.", 10);
+    console.log("Autofill cancelled: Grid contains incomplete rebus entries.");
+    return;
+  }
   solveWorker.postMessage(['run', solveWordlist, puz, isQuick]);
   solveWorkerState = 'running';
   solveWorker.onmessage = function(e) {
@@ -907,9 +913,13 @@ function runSolvePending() {
           } else {
             let solution = e.data[1].split('\n');
             solution.pop(); // strip empty last line
+            k = 0;
             for (let i = 0; i < solution.length; i++) {
               for (let j = 0; j < solution[i].length; j++) {
-                xw.fill[i][j] = solution[i][j];
+                if (!rebusIndexes.includes(k)) {
+                  xw.fill[i][j] = solution[i][j];
+                }
+                k++;
               }
             }
             updateGridUI();
