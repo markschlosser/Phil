@@ -75,8 +75,10 @@
       <button id="enter-rebus" type="submit" form="enter-rebus-form" data-tooltip="Enter rebus" onmouseenter="showMenu(event)">
         <i class="fa fa-eye fa-fw" aria-hidden="true"></i>
       </button>
-
-      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
+      <button id="add-circle" type="button" data-tooltip="Toggle circle" onmouseenter="showMenu(event)" onclick="toggleCircle()">
+        <i class="fa fa-circle-thin fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generatePattern()">
         <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
       </button>
       <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
@@ -176,6 +178,7 @@
         <tr> <td>Toggle block square</td> <td><kbd>.</kbd></td> </tr>
         <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
         <tr> <td>Enter rebus</td> <td><kbd>Esc</kbd></td> </tr>
+        <tr> <td>Toggle circle</td> <td><kbd>`</kbd></td> </tr>
       </table>
     </div>
     <div id="credits">

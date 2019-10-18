@@ -202,13 +202,13 @@ function fillGridWithMatch(e) {
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.acrossStartIndex) + fill + xw.fill[current.row].slice(current.acrossEndIndex);
     for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
       const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
-      square.lastChild.innerHTML = fill[i - current.acrossStartIndex];
+      square.querySelector(".fill").innerHTML = fill[i - current.acrossStartIndex];
     }
   } else {
     for (let j = current.downStartIndex; j < current.downEndIndex; j++) {
       xw.fill[j] = xw.fill[j].slice(0, current.col) + fill[j - current.downStartIndex] + xw.fill[j].slice(current.col + 1);
       const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
-      square.lastChild.innerHTML = fill[j - current.downStartIndex];
+      square.querySelector(".fill").innerHTML = fill[j - current.downStartIndex];
     }
   }
   isMutated = true;

@@ -144,6 +144,10 @@ h1 {
   background: var(--highlight-active-color);
 }
 
+#grid:focus td.active .circle {
+  border: 1px solid var(--highlight-border-color);
+}
+
 #grid td.pencil .fill {
   /*opacity: 0.3;*/
   color: var(--tertiary-color);
@@ -163,6 +167,10 @@ h1 {
   border-style: double;
   border: 1px solid var(--highlight-border-color);
   background-color: var(--highlight-color);
+}
+
+#grid:focus td.highlight .circle {
+  border: 1px solid var(--highlight-border-color);
 }
 
 #grid td.lowlight {
@@ -586,6 +594,15 @@ kbd {
   text-transform: uppercase;
 }
 
+.circle {
+  background-color: rgba(0, 0, 0, 0);
+  border-radius: 50%;
+  border: 1px solid var(--grid-border-color);;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+}
+
 @media (hover: hover) and (pointer: fine) {
   body {
     width: auto;
@@ -605,6 +622,10 @@ kbd {
     border-left: 1px solid var(--grid-border-color);
     border-top: 1px solid var(--grid-border-color);
     padding-top: 6px;
+  }
+  .circle {
+    width: 37px;
+    height: 35px;
   }
 }
 
@@ -657,6 +678,10 @@ kbd {
       border-top: 1px solid var(--grid-border-color);
       padding-top: 4px;
       font-size: 8px;
+    }
+    .circle {
+      width: 17px;
+      height: 16px;
     }
     .label {
       font-size: 5px;

@@ -27,6 +27,7 @@ const arrowKeys = [ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ARROW_DOWN];
 const ENTER = "Enter";
 const DELETE = "Backspace";
 const ESCAPE = "Escape";
+const BACKTICK = "`";
 const SPACE = " ";
 const BLOCK = ".";
 const DASH = "-";
@@ -135,7 +136,7 @@ class Grid {
         } else {
           activeCell.classList.remove("pencil");
         }
-        activeCell.lastChild.innerHTML = fill;
+        activeCell.querySelector(".fill").innerHTML = fill;
         if (fill == BLOCK) {
           activeCell.classList.add("block");
         } else {
@@ -383,7 +384,7 @@ function keyboardHandler(e) {
   if (letterKeys.includes(e.key.toLowerCase()) || e.key == SPACE) {
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row][current.col] = e.key.toUpperCase();
-    activeCell.lastChild.classList.remove("rebus");
+    activeCell.querySelector(".fill").classList.remove("rebus");
     if (oldContent == BLOCK) {
       if (isSymmetrical) {
         xw.fill[symRow][symCol] = BLANK;
@@ -402,16 +403,19 @@ function keyboardHandler(e) {
         e = new KeyboardEvent("keydown", {"key": DELETE}); // make it a white square
       } else {
         xw.fill[current.row][current.col] = BLOCK;
-        activeCell.lastChild.classList.remove("rebus");
+        activeCell.querySelector(".fill").classList.remove("rebus");
         if (isSymmetrical) {
           xw.fill[symRow][symCol] = BLOCK;
-          symCell.lastChild.classList.remove("rebus");
+          symCell.querySelector(".fill").classList.remove("rebus");
         }
       }
       isMutated = true;
   }
   if (e.key == ESCAPE) {
     enterRebus(e);
+  }
+  if (e.key == BACKTICK) {
+    toggleCircle();
   }
   if (e.key == ENTER) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
@@ -420,7 +424,7 @@ function keyboardHandler(e) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row][current.col] = BLANK;
-    activeCell.lastChild.classList.remove("rebus");
+    activeCell.querySelector(".fill").classList.remove("rebus");
       if (oldContent == BLOCK) {
         if (isSymmetrical) {
           xw.fill[symRow][symCol] = BLANK;
@@ -519,7 +523,7 @@ function updateGridUI() {
       } else {
         activeCell.classList.remove("pencil");
       }
-      activeCell.lastChild.innerHTML = fill;
+      activeCell.querySelector(".fill").innerHTML = fill;
       if (fill == BLOCK) {
         activeCell.classList.add("block");
       } else {
@@ -547,8 +551,8 @@ function updateCluesUI() {
   // Otherwise, assign values
   const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.acrossStartIndex + '"]');
   const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').querySelector('[data-col="' + current.col + '"]');
-  acrossClueNumber.innerHTML = acrossCell.firstChild.innerHTML + "a.";
-  downClueNumber.innerHTML = downCell.firstChild.innerHTML + "d.";
+  acrossClueNumber.innerHTML = acrossCell.querySelector(".label").innerHTML + "a.";
+  downClueNumber.innerHTML = downCell.querySelector(".label").innerHTML + "d.";
   acrossClueText.innerHTML = xw.clues[[current.row, current.acrossStartIndex, ACROSS]];
   downClueText.innerHTML = xw.clues[[current.downStartIndex, current.col, DOWN]];
 }
@@ -606,10 +610,10 @@ function updateLabelsAndClues() {
       const grid = document.getElementById("grid");
       let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (isAcross || isDown) {
-        currentCell.firstChild.innerHTML = count; // Set square's label to the count
+        currentCell.querySelector(".label").innerHTML = count; // Set square's label to the count
         count++;
       } else {
-        currentCell.firstChild.innerHTML = "";
+        currentCell.querySelector(".label").innerHTML = "";
       }
 
       if (isAcross) {
@@ -886,11 +890,11 @@ function runSolvePending() {
     }
     puz = puz + '\n';
   }
-  if (hasRebus) {
-    new Notification("Autofill does not currently support rebus grids.", 10);
-    console.log("Autofill cancelled: grid contains rebus.");
-    return;
-  }
+  // if (hasRebus) {
+  //   new Notification("Autofill does not currently support rebus grids.", 10);
+  //   console.log("Autofill cancelled: grid contains rebus.");
+  //   return;
+  // }
   solveWorker.postMessage(['run', solveWordlist, puz, isQuick]);
   solveWorkerState = 'running';
   solveWorker.onmessage = function(e) {
@@ -1012,7 +1016,7 @@ function enterRebus(e) {
     return;
   }
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-  let fill = activeCell.lastChild;
+  let fill = activeCell.querySelector(".fill");
   let oldContent = xw.fill[current.row][current.col];
   xw.fill[current.row][current.col] = rebusInput.value.toUpperCase();
   fill.classList.add("rebus");
@@ -1025,6 +1029,25 @@ function enterRebus(e) {
   }
   updateUI();
   document.getElementById("enter-rebus-menu").classList.add("hidden");
+  if (current.direction == ACROSS) {
+    e = new KeyboardEvent("keydown", {"key": ARROW_RIGHT});
+  } else {
+    e = new KeyboardEvent("keydown", {"key": ARROW_DOWN});
+  }
+  keyboardHandler(e);
+  grid.focus();
+}
+
+function toggleCircle() {
+  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  if (activeCell.querySelector(".circle")) {
+    activeCell.removeChild(activeCell.querySelector(".circle"));
+  } else {
+    let circle = document.createElement("DIV");
+    circle.setAttribute("class", "circle");
+    activeCell.appendChild(circle);
+  }
+  updateUI();
   if (current.direction == ACROSS) {
     e = new KeyboardEvent("keydown", {"key": ARROW_RIGHT});
   } else {

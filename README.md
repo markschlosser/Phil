@@ -17,12 +17,12 @@ New to this fork:
 * Dark mode
 * Mobile support
 * Rebus support
+* Circle support
 
 TODO:
-* Circle/shade support
 * .xpf and .xd support
 * Undo/redo
-* Autofill bugfixes and improvements
+* Autofill improvements and integration
 * Better responsive layout
 
 ## Acknowledgements

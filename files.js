@@ -103,6 +103,11 @@ class PuzReader {
       Object.assign(extras, this.readExtra());
     }
     // console.log(extras);
+    if ("GEXT" in extras) {
+      json.circles = extras.GEXT.map(c => c == 128);
+    } else {
+      json.circles = new Array(grid.length).fill(0);
+    }
     if ("RTBL" in extras && "GRBS" in extras) {
       let rebusTable = {};
       for (let entry of extras.RTBL.replace(/\s+/g, '').slice(0, -1).split(';')) {
@@ -116,7 +121,7 @@ class PuzReader {
       }
     }
     json.grid = grid;
-    // console.log(json.grid);
+    // console.log(json);
     return json;
   }
 }
@@ -412,9 +417,15 @@ function convertJSONToPuzzle(puz) {
     for (let j = 0; j < xw.cols; j++) {
       const k = (i * xw.cols) + j;
       fill[i].push(puz.grid[k].toUpperCase());
-      let div = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]').querySelector(".fill");
+      let td = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let fillDiv = td.querySelector(".fill");
       if (fill[i][j].length > 1) {
-        div.classList.add("rebus");
+        fillDiv.classList.add("rebus");
+      }
+      if (puz.circles[k] == 1) {
+        let circle = document.createElement("DIV");
+        circle.setAttribute("class", "circle");
+        td.appendChild(circle);
       }
     }
   }
@@ -427,8 +438,8 @@ function convertJSONToPuzzle(puz) {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      if (activeCell.firstChild.innerHTML) {
-        const label = activeCell.firstChild.innerHTML + ".";
+      if (activeCell.querySelector(".label").innerHTML) {
+        const label = activeCell.querySelector(".label").innerHTML + ".";
         for (let k = 0; k < puz.clues.across.length; k++) {
           if (label == puz.clues.across[k].slice(0, label.length)) {
             xw.clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
@@ -483,7 +494,7 @@ function convertPuzzleToJSON() {
   };
   for (const key in xw.clues) {
     const location = key.split(",");
-    const label = grid.querySelector('[data-row="' + location[0] + '"]').querySelector('[data-col="' + location[1] + '"]').firstChild.innerHTML;
+    const label = grid.querySelector('[data-row="' + location[0] + '"]').querySelector('[data-col="' + location[1] + '"]').querySelector(".label").innerHTML;
     if (label) {
       if (location[2] == ACROSS) {
         puz.clues.across.push(label + ". " + xw.clues[location]);
@@ -494,9 +505,12 @@ function convertPuzzleToJSON() {
   }
   // Read grid
   puz.grid = [];
+  puz.circles = [];
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       puz.grid.push(xw.fill[i][j]);
+      let square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      puz.circles.push(square.querySelector(".circle") ? 1 : 0);
     }
   }
   return puz;
@@ -594,10 +608,8 @@ function generatePDFClues() {
   for (const key in xw.clues) {
     let [i, j, direction] = key.split(",");
     const cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-    let label = Number(cell.firstChild.innerHTML);
+    let label = Number(cell.querySelector(".label").innerHTML);
     if (direction == ACROSS) {
-      // acrossClues.push([label, xw.clues[key], getWordAt(i, j, direction)]);
-      // acrossClues.sort(byLabel);
       acrossClues.push({ "label": label, "clue": xw.clues[key], "answer": getWordAt(i, j, direction)});
       acrossClues.sort(byLabel);
     } else {
@@ -620,6 +632,11 @@ function layoutPDFGrid(doc, format, isFilled) {
       doc.setFillColor(xw.fill[i][j] == BLOCK ? 0 : 255);
       doc.rect(format.gridOrigin.x + (j * format.squareSize),
                format.gridOrigin.y + (i * format.squareSize), format.squareSize, format.squareSize, 'FD');
+      const cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      if (cell.querySelector(".circle")) {
+        doc.circle(format.gridOrigin.x + ((j + 0.5) * format.squareSize),
+                   format.gridOrigin.y + ((i + 0.5) * format.squareSize), format.squareSize/2);
+      }
     }
   }
   // Label grid
@@ -629,7 +646,7 @@ function layoutPDFGrid(doc, format, isFilled) {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      const label = square.firstChild.innerHTML;
+      const label = square.querySelector(".label").innerHTML;
       if (label) {
         doc.text(format.gridOrigin.x + (j * format.squareSize) + format.labelOffset.x,
                  format.gridOrigin.y + (i * format.squareSize) + format.labelOffset.y, label);
@@ -638,7 +655,6 @@ function layoutPDFGrid(doc, format, isFilled) {
   }
   // Fill grid
   if (isFilled) {
-    // doc.setFontSize(format.fillFontSize);
     for (let i = 0; i < xw.rows; i++) {
       for (let j = 0; j < xw.cols; j++) {
         if (xw.fill[i][j].length == 1) {
