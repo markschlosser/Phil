@@ -670,6 +670,10 @@ kbd {
       transform: scale(1.2, 2);
       font-weight: 500;
     }
+    #toolbar button {
+      width: 27px;
+      height: 27px;
+    }
     .clue {
       margin: 0;
       padding: 0;
@@ -677,7 +681,6 @@ kbd {
       font-weight: 600;
       letter-spacing: -0.03em;
     }
-
     #sidebar {
       width: 85vw;
       height: 30vh;
