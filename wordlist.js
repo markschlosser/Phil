@@ -197,19 +197,41 @@ function fillGridWithMatch(e) {
   const li = e.currentTarget;
   const match = li.innerHTML.toUpperCase();
   let k = 0;
+  let oldWord = [];
+  let newWord = [];
+  let start = -1;
+  let end = -1;
   const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
   if (dir == ACROSS) {
-    for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
+    start = current.acrossStartIndex;
+    end = current.acrossEndIndex;
+    for (let j = start; j < end; j++) {
+      oldWord.push(xw.fill[current.row][j]);
       xw.fill[current.row][j] = match.slice(k, k + xw.fill[current.row][j].length);
+      newWord.push(xw.fill[current.row][j]);
       k += xw.fill[current.row][j].length;
     }
   } else {
-    for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
+    start = current.downStartIndex;
+    end = current.downEndIndex;
+    for (let i = start; i < end; i++) {
+      oldWord.push(xw.fill[i][current.col]);
       xw.fill[i][current.col] = match.slice(k, k + xw.fill[i][current.col].length);
+      newWord.push(xw.fill[i][current.col]);
       k += xw.fill[i][current.col].length;
     }
   }
   isMutated = true;
+  let state = {
+    "row": current.row,
+    "col": current.col,
+    "direction": dir,
+    "start": start,
+    "end": end,
+    "old": oldWord,
+    "new": newWord
+  };
+  actionTimeline.record(new Action("fillMatch", state));
   console.log("Filled '" + li.innerHTML + "' going " + dir);
   updateUI();
   grid.focus();

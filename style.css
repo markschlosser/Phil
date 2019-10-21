@@ -59,36 +59,13 @@ h1 {
   font-weight: 400;
   color: var(--tertiary-color);
   margin-top: 20;
-  /* position: absolute;
-  right: 5px;
-  bottom: 5px; */
+  text-align: center;
 }
 
 #credits a {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--tertiary-color);
   text-decoration: none;
-}
-
-#footer {
-  width: 573px;
-  margin: 0;
-  padding: 0;
-  margin-left: 38px;
-  margin-top: 3px;
-  font-size: 9.5pt;
-  line-height: 11pt;
-  clear: both;
-}
-
-#footer a {
-  color: var(--tertiary-color);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-#footer a:hover {
-  color: var(--secondary-color);
 }
 
 #grid {
@@ -234,6 +211,7 @@ kbd {
   font-weight: 600;
   color: var(--tertiary-color);
   text-transform: uppercase;
+  text-align: center;
 }
 
 .notification table {

@@ -66,6 +66,17 @@
     <div class="divider"></div>
 
     <div class="section">
+      <button id="undo" type="button" data-tooltip="Undo" onmouseenter="showMenu(event)" onclick="undo()">
+        <i class="fa fa-undo fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="redo" type="button" data-tooltip="Redo" onmouseenter="showMenu(event)" onclick="redo()">
+        <i class="fa fa-repeat fa-fw" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
       <div id="enter-rebus-menu" class="menu hidden" onmouseleave="hideMenu(event)">
         <h4>Enter rebus:</h4>
         <form id="enter-rebus-form" action="javascript:void(0);" onsubmit="enterRebus(event)">
@@ -78,9 +89,11 @@
       <button id="add-circle" type="button" data-tooltip="Toggle circle" onmouseenter="showMenu(event)" onclick="toggleCircle()">
         <i class="fa fa-circle-thin fa-fw" aria-hidden="true"></i>
       </button>
+    </div>
 
-      <div class="divider"></div>
-      
+    <div class="divider"></div>
+
+    <div class="section">
       <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generatePattern()">
         <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
       </button>
@@ -177,7 +190,8 @@
     <div id="shortcuts">
       <h3>Keyboard Shortcuts</h3>
       <table>
-        <!-- <tr> <td>Undo</td> <td><kbd>Ctrl</kbd><kbd>Z</kbd></td> </tr> -->
+        <tr> <td>Undo</td> <td><kbd>Ctrl/Meta</kbd><kbd>Z</kbd></td> </tr>
+        <tr> <td>Redo</td> <td><kbd>Shift</kbd><kbd>Ctrl/Meta</kbd><kbd>Z</kbd></td> </tr>
         <tr> <td>Toggle block square</td> <td><kbd>.</kbd></td> </tr>
         <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
         <tr> <td>Enter rebus</td> <td><kbd>Esc</kbd></td> </tr>

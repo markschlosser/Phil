@@ -290,10 +290,116 @@ class Interface {
   }
 }
 
+class ActionTimeline {
+  constructor(pastStack = [], futureStack = []) {
+    this.pastStack = pastStack;
+    this.futureStack = futureStack;
+  }
+  undo() {
+    let action = this.pastStack.pop();
+    if (action) {
+      isMutated = true;
+      this.futureStack.push(action);
+      action.undo();
+    }
+  }
+  redo() {
+    let action = this.futureStack.pop();
+    if (action) {
+      isMutated = true;
+      this.pastStack.push(action);
+      action.redo();
+    }
+  }
+  record(action) {
+    this.pastStack.push(action);
+    this.futureStack = [];
+  }
+  clear() {
+    this.pastStack = [];
+    this.futureStack = [];
+  }
+}
+
+class Action {
+  constructor(type, state) {
+    this.type = type;
+    this.state = state;
+  }
+  undo(isRedo = false) {
+    let state = this.state;
+    current.row = state.row;
+    current.col = state.col;
+    current.direction = state.direction;
+    switch (this.type) {
+      case "editFill":
+        let activeCell = grid.querySelector('[data-row="' + state.row + '"]').querySelector('[data-col="' + state.col + '"]');
+        let fill = isRedo ? state.new : state.old;
+        xw.fill[state.row][state.col] = fill;
+        activeCell.querySelector(".fill").classList.remove("rebus");
+        if (fill.length > 1) {
+          activeCell.querySelector(".fill").classList.add("rebus");
+        }
+        if (state.isSymmetrical) {
+          let symFill = isRedo ? state.symNew : state.symOld;
+          xw.fill[state.symRow][state.symCol] = symFill;
+          let symCell = grid.querySelector('[data-row="' + state.symRow + '"]').querySelector('[data-col="' + state.symCol + '"]');
+          symCell.querySelector(".fill").classList.remove("rebus");
+          if (symFill.length > 1) {
+            symCell.querySelector(".fill").classList.add("rebus");
+          }
+        }
+        break;
+      case "fillMatch":
+        let word = isRedo ? state.new : state.old;
+        let k = 0;
+        if (state.direction == ACROSS) {
+          for (let j = state.start; j < state.end; j++) {
+            xw.fill[state.row][j] = word[k++];
+          }
+        } else {
+          for (let i = state.start; i < state.end; i++) {
+            xw.fill[i][state.col] = word[k++];
+          }
+        }
+        break;
+      case "toggleCircle":
+        let cell = grid.querySelector('[data-row="' + state.row + '"]').querySelector('[data-col="' + state.col + '"]');
+        if (cell.querySelector(".circle")) {
+          cell.removeChild(cell.querySelector(".circle"));
+        } else {
+          let circle = document.createElement("DIV");
+          circle.setAttribute("class", "circle");
+          cell.appendChild(circle);
+        }
+        break;
+      case "autoFill":
+        for (let i = 0; i < xw.rows; i++) {
+          for (let j = 0; j < xw.cols; j++) {
+            xw.fill[i][j] = isRedo ? state.new[i][j] : state.old[i][j];
+          }
+        }
+        break;
+      // case "newPuzzle":
+      //   break;
+    }
+    grid.focus();
+    if (grid.querySelector(".active")) {
+      grid.querySelector(".active").classList.remove("active");
+      grid.querySelector('[data-row="' + state.row + '"]').querySelector('[data-col="' + state.col + '"]').classList.add("active");
+    }
+    updateUI();
+  }
+  redo() {
+    this.undo(true);
+  }
+}
+
 let xw = new Crossword(); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 current.update();
 if (localStorage.getItem("theme") == "dark") toggleDarkMode();
+let actionTimeline = new ActionTimeline();
 
 //____________________
 // F U N C T I O N S
@@ -344,9 +450,11 @@ function createNewPuzzle(rows, cols) {
   grid.addEventListener('keydown', keyboardHandler);
   console.log(`New ${xw.rows}×${xw.cols} puzzle created.`);
 
-  // if (!xw.isStandardSize()){
-  //   new Notification("Warning, using non-standard grid sizes may cause problems with some features.", 10);
-  // }
+  actionTimeline.clear();
+
+  if (!xw.isStandardSize()){
+    new Notification("Warning, PDF exporting does not support non-standard grid sizes.", 10);
+  }
 }
 
 function createNewCustomPuzzle() {
@@ -374,12 +482,26 @@ function mouseHandler(e) {
 }
 
 function keyboardHandler(e) {
-  // console.log(e.key);
+  console.log(e.key);
+  if (e.key.toLowerCase() == "z" && (e.ctrlKey || e.metaKey)) {
+    if (e.shiftKey) {
+      redo();
+    } else {
+      undo();
+    }
+    return;
+  }
   isMutated = false;
+  let actionRow = current.row;
+  let actionCol = current.col;
+  let actionDirection = current.direction;
+  let actionOld = xw.fill[current.row][current.col];
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
   let symCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
+  let symOld = xw.fill[symRow][symCol];
+  let symNew = "";
 
   if (letterKeys.includes(e.key.toLowerCase()) || e.key == SPACE) {
     let oldContent = xw.fill[current.row][current.col];
@@ -437,6 +559,26 @@ function keyboardHandler(e) {
         }
       }
       isMutated = true;
+  }
+  if (actionOld != xw.fill[actionRow][actionCol]) {
+    let state = {
+      "row": actionRow,
+      "col": actionCol,
+      "direction": actionDirection,
+      "old": actionOld,
+      "new": xw.fill[actionRow][actionCol]
+    };
+    if (isSymmetrical) {
+      let symState = {
+        "isSymmetrical": isSymmetrical,
+        "symRow": symRow,
+        "symCol": symCol,
+        "symOld": symOld,
+        "symNew": xw.fill[symRow][symCol]
+      };
+      Object.assign(state, symState);
+    }
+    actionTimeline.record(new Action("editFill", state));
   }
   if (arrowKeys.includes(e.key)) {
       e.preventDefault();
@@ -913,15 +1055,26 @@ function runSolvePending() {
           } else {
             let solution = e.data[1].split('\n');
             solution.pop(); // strip empty last line
+            let state = {};
+            state.old = [];
+            state.new = [];
             k = 0;
             for (let i = 0; i < solution.length; i++) {
+              state.old.push([]);
+              state.new.push([]);
               for (let j = 0; j < solution[i].length; j++) {
+                state.old[i].push(xw.fill[i][j]);
                 if (!rebusIndexes.includes(k)) {
                   xw.fill[i][j] = solution[i][j];
                 }
+                state.new[i].push(xw.fill[i][j]);
                 k++;
               }
             }
+            state.row = current.row;
+            state.col = current.col;
+            state.direction = current.direction;
+            actionTimeline.record(new Action("autoFill", state));
             updateGridUI();
             updateStatsUI();
             grid.focus();
@@ -1029,14 +1182,38 @@ function enterRebus(e) {
   let fill = activeCell.querySelector(".fill");
   let oldContent = xw.fill[current.row][current.col];
   xw.fill[current.row][current.col] = rebusInput.value.toUpperCase();
-  fill.classList.add("rebus");
+  if (xw.fill[current.row][current.col].length > 1) {
+    fill.classList.add("rebus");
+  }
   let symRow = xw.rows - 1 - current.row;
   let symCol = xw.cols - 1 - current.col;
+  let symOld = xw.fill[symRow][symCol];
   if (oldContent == BLOCK) {
     if (isSymmetrical) {
       xw.fill[symRow][symCol] = BLANK;
     }
   }
+  if (oldContent != xw.fill[current.row][current.col]) {
+    let state = {
+      "row": current.row,
+      "col": current.col,
+      "direction": current.direction,
+      "old": oldContent,
+      "new": xw.fill[current.row][current.col]
+    };
+    if (isSymmetrical) {
+      let symState = {
+        "isSymmetrical": isSymmetrical,
+        "symRow": symRow,
+        "symCol": symCol,
+        "symOld": symOld,
+        "symNew": xw.fill[symRow][symCol]
+      };
+      Object.assign(state, symState);
+    }
+    actionTimeline.record(new Action("editFill", state));
+  }
+
   updateUI();
   document.getElementById("enter-rebus-menu").classList.add("hidden");
   if (current.direction == ACROSS) {
@@ -1058,6 +1235,12 @@ function toggleCircle() {
     activeCell.appendChild(circle);
   }
   updateUI();
+  let state = {
+    "row": current.row,
+    "col": current.col,
+    "direction": current.direction
+  };
+  actionTimeline.record(new Action("toggleCircle", state));
   if (current.direction == ACROSS) {
     e = new KeyboardEvent("keydown", {"key": ARROW_RIGHT});
   } else {
@@ -1065,6 +1248,14 @@ function toggleCircle() {
   }
   keyboardHandler(e);
   grid.focus();
+}
+
+function undo() {
+  actionTimeline.undo();
+}
+
+function redo() {
+  actionTimeline.redo();
 }
 
 function randomNumber(min, max) {
