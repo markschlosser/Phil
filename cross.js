@@ -453,7 +453,7 @@ function createNewPuzzle(rows, cols) {
   actionTimeline.clear();
 
   if (!xw.isStandardSize()){
-    new Notification("Warning, PDF exporting does not support non-standard grid sizes.", 10);
+    new Notification("Warning, PDF exporting is not optimized for non-standard grid sizes.", 10);
   }
 }
 
@@ -482,7 +482,7 @@ function mouseHandler(e) {
 }
 
 function keyboardHandler(e) {
-  console.log(e.key);
+  // console.log(e.key);
   if (e.key.toLowerCase() == "z" && (e.ctrlKey || e.metaKey)) {
     if (e.shiftKey) {
       redo();
@@ -611,7 +611,7 @@ function keyboardHandler(e) {
           current.direction = DOWN;
           break;
       }
-      console.log("[" + current.row + "," + current.col + "]");
+      // console.log("[" + current.row + "," + current.col + "]");
       activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       activeCell.classList.add("active");
   }

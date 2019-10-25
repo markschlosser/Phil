@@ -206,12 +206,18 @@ class PuzWriter {
     const down = json.clues.down;
     var clues = [];
     for (var i = 0; i < across.length; i++) {
-      const sp = across[i].split('. ');
-      clues.push([2 * parseInt(sp[0]), sp[1]]);
+      const numEnd = across[i].indexOf(". ");
+      const textStart = numEnd + 2;
+      const num = across[i].slice(0, numEnd);
+      const text = across[i].slice(textStart);
+      clues.push([2 * parseInt(num), text]);
     }
     for (let i = 0; i < down.length; i++) {
-      const sp = down[i].split('. ');
-      clues.push([2 * parseInt(sp[0]) + 1, sp[1]]);
+      const numEnd = down[i].indexOf(". ");
+      const textStart = numEnd + 2;
+      const num = down[i].slice(0, numEnd);
+      const text = down[i].slice(textStart);
+      clues.push([2 * parseInt(num), text]);
     }
     clues.sort((a, b) => a[0] - b[0]);
     for (let i = 0; i < clues.length; i++) {
