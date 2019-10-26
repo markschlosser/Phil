@@ -830,6 +830,9 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
 }
 
 function getWordIndices(line, direction, position) {
+  if (line[position] == BLOCK) {
+    return [position, position];
+  }
   let start = line.slice(0, position).lastIndexOf(BLOCK);
   start = (start == -1) ? 0 : start + 1;
   let limit = (direction == ACROSS) ? xw.cols : xw.rows;
@@ -847,7 +850,7 @@ function updateGridHighlights() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      square.classList.remove("highlight", "lowlight");
+      square.classList.remove("highlight", "lowlight", "highlight-chart-hover");
     }
   }
   // Highlight across squares

@@ -13,7 +13,7 @@ New to this fork:
 * NYT Sunday grid (21×21) support
 * Custom grid sizes
 * Strict matching mode (fill suggestions filtered by crossers' constraints)
-* Stats
+* Interactive stats
 * Dark mode
 * Mobile support
 * Rebus support

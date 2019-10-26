@@ -7,7 +7,7 @@ var letterChart;
 var wordChart;
 
 class BarChartSpec {
-  constructor(id, label, labels, data) {
+  constructor(id, label, labels, data, hoverFunction) {
     this.ctx = document.getElementById(id);
     this.config = {
         type: 'horizontalBar',
@@ -33,6 +33,7 @@ class BarChartSpec {
                     }
                 }
             },
+            onHover: hoverFunction,
             tooltips: {
                 "enabled": false
             },
@@ -190,14 +191,16 @@ function updateStatsUI(init) {
       'Letters',
       // stats.alphabet.map(a => a.toLowerCase()),
       stats.alphabet,
-      stats.letterCounts
+      stats.letterCounts,
+      hoverLetterChart
     );
     letterChart = new Chart(letterChartSpec.ctx, letterChartSpec.config);
     let wordChartSpec = new BarChartSpec(
       'word-chart',
       'Words',
       stats.wordLengths,
-      stats.wordCounts
+      stats.wordCounts,
+      hoverWordChart
     );
     wordChart = new Chart(wordChartSpec.ctx, wordChartSpec.config);
   } else {
@@ -244,4 +247,57 @@ function updateStatsUIColors() {
   wordChart.data.datasets[0].borderColor = fontColor;
   letterChart.update();
   wordChart.update();
+}
+
+hoverLetterIndex = null;
+hoverWordIndex = null;
+
+function hoverLetterChart(e) {
+  let item = letterChart.getElementAtEvent(e);
+  if (item.length && hoverLetterIndex != item[0]._index) {
+    hoverLetterIndex = item[0]._index;
+    toggleHighlightLetters(stats.alphabet[hoverLetterIndex], true);
+  } else if (!item.length && hoverLetterIndex !== null) {
+    toggleHighlightLetters(stats.alphabet[hoverLetterIndex], false);
+    hoverLetterIndex = null;
+  }
+}
+
+function hoverWordChart(e) {
+  let item = wordChart.getElementAtEvent(e);
+  if (item.length && hoverWordIndex != item[0]._index) {
+    hoverWordIndex = item[0]._index;
+    toggleHighlightWords(stats.wordLengths[hoverWordIndex], true);
+  } else if (!item.length && hoverWordIndex !== null) {
+    toggleHighlightWords(stats.wordLengths[hoverWordIndex], false);
+    hoverWordIndex = null;
+  }
+}
+
+function toggleHighlightLetters(letter, on = true) {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      let square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      square.classList.remove("highlight-chart-hover");
+      if (xw.fill[i][j].includes(letter) && on) {
+        square.classList.add("highlight-chart-hover");
+      }
+    }
+  }
+}
+
+function toggleHighlightWords(wordLength, on = true) {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      let square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      square.classList.remove("highlight-chart-hover");
+      let acrossWordIndices = getWordIndices(getRow(i), ACROSS, j);
+      let acrossWordLength = acrossWordIndices[1] - acrossWordIndices[0];
+      let downWordIndices = getWordIndices(getCol(j), DOWN, i);
+      let downWordLength = downWordIndices[1] - downWordIndices[0];
+      if ((acrossWordLength == wordLength || downWordLength == wordLength) && on) {
+        square.classList.add("highlight-chart-hover");
+      }
+    }
+  }
 }

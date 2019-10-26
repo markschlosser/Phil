@@ -428,7 +428,7 @@ function convertJSONToPuzzle(puz) {
       if (fill[i][j].length > 1) {
         fillDiv.classList.add("rebus");
       }
-      if (puz.circles[k] == 1) {
+      if (puz.circles && puz.circles[k] == 1) {
         let circle = document.createElement("DIV");
         circle.setAttribute("class", "circle");
         td.appendChild(circle);
