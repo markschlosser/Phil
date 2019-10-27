@@ -88,10 +88,10 @@ class Crossword {
 class Grid {
   constructor(rows, cols) {
     document.getElementById("grid-container").innerHTML = "";
-    let table = document.createElement("TABLE");
-    table.setAttribute("id", "grid");
-    table.setAttribute("tabindex", "1");
-    document.getElementById("grid-container").appendChild(table);
+    grid = document.createElement("TABLE");
+    grid.setAttribute("id", "grid");
+    grid.setAttribute("tabindex", "1");
+    document.getElementById("grid-container").appendChild(grid);
 
     for (let i = 0; i < rows; i++) {
         let row = document.createElement("TR");
@@ -117,7 +117,6 @@ class Grid {
           row.appendChild(col);
         }
     }
-    grid = document.getElementById("grid");
     squares = grid.querySelectorAll('td');
     for (const square of squares) {
       square.addEventListener('click', mouseHandler);
@@ -128,7 +127,7 @@ class Grid {
   update() {
     for (let i = 0; i < xw.rows; i++) {
       for (let j = 0; j < xw.cols; j++) {
-        const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+        const activeCell = getGridSquare(i, j);
         let fill = xw.fill[i][j];
         if (fill == BLANK && forced != null) {
           fill = forced[i][j];
@@ -333,7 +332,7 @@ class Action {
     current.direction = state.direction;
     switch (this.type) {
       case "editFill":
-        let activeCell = grid.querySelector('[data-row="' + state.row + '"]').querySelector('[data-col="' + state.col + '"]');
+        let activeCell = getGridSquare(state.row, state.col);
         let fill = isRedo ? state.new : state.old;
         xw.fill[state.row][state.col] = fill;
         activeCell.querySelector(".fill").classList.remove("rebus");
@@ -343,7 +342,7 @@ class Action {
         if (state.isSymmetrical) {
           let symFill = isRedo ? state.symNew : state.symOld;
           xw.fill[state.symRow][state.symCol] = symFill;
-          let symCell = grid.querySelector('[data-row="' + state.symRow + '"]').querySelector('[data-col="' + state.symCol + '"]');
+          let symCell = getGridSquare(state.symRow, state.symCol);
           symCell.querySelector(".fill").classList.remove("rebus");
           if (symFill.length > 1) {
             symCell.querySelector(".fill").classList.add("rebus");
@@ -364,7 +363,7 @@ class Action {
         }
         break;
       case "toggleCircle":
-        let cell = grid.querySelector('[data-row="' + state.row + '"]').querySelector('[data-col="' + state.col + '"]');
+        let cell = getGridSquare(state.row, state.col);
         if (cell.querySelector(".circle")) {
           cell.removeChild(cell.querySelector(".circle"));
         } else {
@@ -386,7 +385,7 @@ class Action {
     grid.focus();
     if (grid.querySelector(".active")) {
       grid.querySelector(".active").classList.remove("active");
-      grid.querySelector('[data-row="' + state.row + '"]').querySelector('[data-col="' + state.col + '"]').classList.add("active");
+      getGridSquare(state.row, state.col).classList.add("active");
     }
     updateUI();
   }
@@ -434,7 +433,6 @@ function createNewPuzzle(rows, cols) {
     "direction":  ACROSS
   };
 
-  grid = document.getElementById("grid");
   squares = grid.querySelectorAll('td');
 
   updateActiveWords();
@@ -453,7 +451,7 @@ function createNewPuzzle(rows, cols) {
   actionTimeline.clear();
 
   if (!xw.isStandardSize()){
-    new Notification("Warning, PDF exporting is not optimized for non-standard grid sizes.", 10);
+    new Notification("Warning, PDF exporting is not optimized for non-standard grid sizes.", 5);
   }
 }
 
@@ -466,7 +464,7 @@ function createNewCustomPuzzle() {
 }
 
 function mouseHandler(e) {
-  const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  const previousCell = getGridSquare(current.row, current.col);
   previousCell.classList.remove("active");
   const activeCell = e.currentTarget;
   if (activeCell == previousCell) {
@@ -496,10 +494,10 @@ function keyboardHandler(e) {
   let actionCol = current.col;
   let actionDirection = current.direction;
   let actionOld = xw.fill[current.row][current.col];
-  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  let activeCell = getGridSquare(current.row, current.col);
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
-  let symCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
+  let symCell = getGridSquare(symRow, symCol);
   let symOld = xw.fill[symRow][symCol];
   let symNew = "";
 
@@ -582,7 +580,7 @@ function keyboardHandler(e) {
   }
   if (arrowKeys.includes(e.key)) {
       e.preventDefault();
-      const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+      const previousCell = getGridSquare(current.row, current.col);
       previousCell.classList.remove("active");
       let content = xw.fill[current.row][current.col];
       switch (e.key) {
@@ -612,7 +610,7 @@ function keyboardHandler(e) {
           break;
       }
       // console.log("[" + current.row + "," + current.col + "]");
-      activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+      activeCell = getGridSquare(current.row, current.col);
       activeCell.classList.add("active");
   }
   updateUI();
@@ -657,7 +655,7 @@ function updateUI() {
 function updateGridUI() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const activeCell = getGridSquare(i, j);
       let fill = xw.fill[i][j];
       if (fill == BLANK && forced != null) {
         fill = forced[i][j];
@@ -680,7 +678,6 @@ function updateCluesUI() {
   let downClueNumber = document.getElementById("down-clue-number");
   let acrossClueText = document.getElementById("across-clue-text");
   let downClueText = document.getElementById("down-clue-text");
-  // const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 
   // If the current cell is block, empty interface and get out
   if (xw.fill[current.row][current.col] == BLOCK) {
@@ -691,8 +688,8 @@ function updateCluesUI() {
     return;
   }
   // Otherwise, assign values
-  const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.acrossStartIndex + '"]');
-  const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').querySelector('[data-col="' + current.col + '"]');
+  const acrossCell = getGridSquare(current.row, current.acrossStartIndex);
+  const downCell = getGridSquare(current.downStartIndex, current.col);
   acrossClueNumber.innerHTML = acrossCell.querySelector(".label").innerHTML + "a.";
   downClueNumber.innerHTML = downCell.querySelector(".label").innerHTML + "d.";
   acrossClueText.innerHTML = xw.clues[[current.row, current.acrossStartIndex, ACROSS]];
@@ -705,11 +702,11 @@ function updateInfoUI() {
 }
 
 function createGrid(rows, cols) {
-  let table = document.createElement("TABLE");
-  table.setAttribute("id", "grid");
-  table.setAttribute("tabindex", "1");
-  // table.setAttribute("tabindex", "0");
-  document.getElementById("grid-container").appendChild(table);
+  grid = document.createElement("TABLE");
+  grid.setAttribute("id", "grid");
+  grid.setAttribute("tabindex", "1");
+  // grid.setAttribute("tabindex", "0");
+  document.getElementById("grid-container").appendChild(grid);
 
 	for (let i = 0; i < rows; i++) {
     	let row = document.createElement("TR");
@@ -749,8 +746,7 @@ function updateLabelsAndClues() {
         isDown = i == 0 || xw.fill[i - 1][j] == BLOCK;
         isAcross = j == 0 || xw.fill[i][j - 1] == BLOCK;
       }
-      const grid = document.getElementById("grid");
-      let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let currentCell = getGridSquare(i, j);
       if (isAcross || isDown) {
         currentCell.querySelector(".label").innerHTML = count; // Set square's label to the count
         count++;
@@ -788,6 +784,10 @@ function updateActiveWords() {
   document.getElementById("down-word").innerHTML = current.downWord;
   // console.log("Across:", current.acrossWord, "Down:", current.downWord);
   // console.log(current.acrossWord.split(DASH).join("*"));
+}
+
+function getGridSquare(row, col) {
+  return grid.querySelector('[data-row="' + row + '"]').querySelector('[data-col="' + col + '"]');
 }
 
 function getRow(i) {
@@ -849,20 +849,20 @@ function updateGridHighlights() {
   // Clear the grid of any highlights
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const square = getGridSquare(i, j);
       square.classList.remove("highlight", "lowlight", "highlight-chart-hover");
     }
   }
   // Highlight across squares
   for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
-    const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + j + '"]');
+    const square = getGridSquare(current.row, j);
     if (j != current.col) {
       square.classList.add((current.direction == ACROSS) ? "highlight" : "lowlight");
     }
   }
   // Highlight down squares
   for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
-    const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + current.col + '"]');
+    const square = getGridSquare(i, current.col);
     if (i != current.row) {
       square.classList.add((current.direction == DOWN) ? "highlight" : "lowlight");
     }
@@ -872,7 +872,7 @@ function updateGridHighlights() {
 function updateSidebarHighlights() {
   let acrossHeading = document.getElementById("across-heading");
   let downHeading = document.getElementById("down-heading");
-  const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  const currentCell = getGridSquare(current.row, current.col);
 
   acrossHeading.classList.remove("highlight");
   downHeading.classList.remove("highlight");
@@ -1181,7 +1181,7 @@ function enterRebus(e) {
     rebusInput.focus();
     return;
   }
-  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  let activeCell = getGridSquare(current.row, current.col);
   let fill = activeCell.querySelector(".fill");
   let oldContent = xw.fill[current.row][current.col];
   xw.fill[current.row][current.col] = rebusInput.value.toUpperCase();
@@ -1229,7 +1229,7 @@ function enterRebus(e) {
 }
 
 function toggleCircle() {
-  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  let activeCell = getGridSquare(current.row, current.col);
   if (activeCell.querySelector(".circle")) {
     activeCell.removeChild(activeCell.querySelector(".circle"));
   } else {

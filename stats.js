@@ -277,7 +277,7 @@ function hoverWordChart(e) {
 function toggleHighlightLetters(letter, on = true) {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      let square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let square = getGridSquare(i, j);
       square.classList.remove("highlight-chart-hover");
       if (xw.fill[i][j].includes(letter) && on) {
         square.classList.add("highlight-chart-hover");
@@ -289,7 +289,7 @@ function toggleHighlightLetters(letter, on = true) {
 function toggleHighlightWords(wordLength, on = true) {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      let square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let square = getGridSquare(i, j);
       square.classList.remove("highlight-chart-hover");
       let acrossWordIndices = getWordIndices(getRow(i), ACROSS, j);
       let acrossWordLength = acrossWordIndices[1] - acrossWordIndices[0];

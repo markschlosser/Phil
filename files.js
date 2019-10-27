@@ -423,7 +423,7 @@ function convertJSONToPuzzle(puz) {
     for (let j = 0; j < xw.cols; j++) {
       const k = (i * xw.cols) + j;
       fill[i].push(puz.grid[k].toUpperCase());
-      let td = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let td = getGridSquare(i, j);
       let fillDiv = td.querySelector(".fill");
       if (fill[i][j].length > 1) {
         fillDiv.classList.add("rebus");
@@ -443,7 +443,7 @@ function convertJSONToPuzzle(puz) {
   // Load in clues and display current clues
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const activeCell = getGridSquare(i, j);
       if (activeCell.querySelector(".label").innerHTML) {
         const label = activeCell.querySelector(".label").innerHTML + ".";
         for (let k = 0; k < puz.clues.across.length; k++) {
@@ -500,7 +500,7 @@ function convertPuzzleToJSON() {
   };
   for (const key in xw.clues) {
     const location = key.split(",");
-    const label = grid.querySelector('[data-row="' + location[0] + '"]').querySelector('[data-col="' + location[1] + '"]').querySelector(".label").innerHTML;
+    const label = getGridSquare(location[0], location[1]).querySelector(".label").innerHTML;
     if (label) {
       if (location[2] == ACROSS) {
         puz.clues.across.push(label + ". " + xw.clues[location]);
@@ -515,7 +515,7 @@ function convertPuzzleToJSON() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       puz.grid.push(xw.fill[i][j]);
-      let square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let square = getGridSquare(i, j);
       puz.circles.push(square.querySelector(".circle") ? 1 : 0);
     }
   }
@@ -613,7 +613,7 @@ function generatePDFClues() {
 
   for (const key in xw.clues) {
     let [i, j, direction] = key.split(",");
-    const cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+    const cell = getGridSquare(i, j);
     let label = Number(cell.querySelector(".label").innerHTML);
     if (direction == ACROSS) {
       acrossClues.push({ "label": label, "clue": xw.clues[key], "answer": getWordAt(i, j, direction)});
@@ -638,7 +638,7 @@ function layoutPDFGrid(doc, format, isFilled) {
       doc.setFillColor(xw.fill[i][j] == BLOCK ? 0 : 255);
       doc.rect(format.gridOrigin.x + (j * format.squareSize),
                format.gridOrigin.y + (i * format.squareSize), format.squareSize, format.squareSize, 'FD');
-      const cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const cell = getGridSquare(i, j);
       if (cell.querySelector(".circle")) {
         doc.circle(format.gridOrigin.x + ((j + 0.5) * format.squareSize),
                    format.gridOrigin.y + ((i + 0.5) * format.squareSize), format.squareSize/2);
@@ -651,7 +651,7 @@ function layoutPDFGrid(doc, format, isFilled) {
   doc.setFontSize(format.labelFontSize);
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const square = getGridSquare(i, j);
       const label = square.querySelector(".label").innerHTML;
       if (label) {
         doc.text(format.gridOrigin.x + (j * format.squareSize) + format.labelOffset.x,
