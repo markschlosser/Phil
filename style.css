@@ -4,6 +4,7 @@
   --secondary-color: rgb(68, 68, 68);
   --tertiary-color: rgb(153, 153, 153);
   --quaternary-color: rgb(248, 248, 248);
+  --shade-color: rgb(190, 190, 190);
   --highlight-color: rgba(222, 241, 255, 0.7);
   --highlight-active-color: rgba(222, 241, 255, 0.5);
   --highlight-border-color: rgb(85, 184, 254);
@@ -28,6 +29,7 @@
   --secondary-color: rgb(157, 165, 179);
   --tertiary-color: rgb(116, 123, 133);
   --quaternary-color: rgb(75, 83, 99);
+  --shade-color: rgb(96, 103, 116);
   --highlight-color: rgba(89, 147, 255, 0.6);
   --highlight-active-color: rgba(90, 135, 220, 0.4);
   --highlight-border-color: rgb(61, 61, 227);
@@ -422,6 +424,10 @@ kbd {
   -webkit-box-shadow: 3px 3px 6px 0px var(--toolbar-shadow-color);
 }
 
+#toolbar #toggle-special-menu {
+  min-width: 130px;
+}
+
 #toolbar .menu h4 {
   margin: 0;
   padding: 0;
@@ -465,6 +471,10 @@ kbd {
   left: 110%;
   top: 0;
   white-space: nowrap;
+}
+
+#toolbar #toggle-special-menu button:after {
+  min-width: 90px;
 }
 
 #toolbar .menu button:hover:after {
@@ -588,6 +598,14 @@ kbd {
   left: -1px;
 }
 
+.shade {
+  background-color: var(--shade-color);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: -1;
+}
+
 @media (hover: hover) and (pointer: fine) {
   body {
     width: auto;
@@ -609,6 +627,10 @@ kbd {
     padding-top: 6px;
   }
   .circle {
+    width: 37px;
+    height: 35px;
+  }
+  .shade {
     width: 37px;
     height: 35px;
   }
@@ -665,6 +687,10 @@ kbd {
       font-size: 8px;
     }
     .circle {
+      width: 17px;
+      height: 16px;
+    }
+    .shade {
       width: 17px;
       height: 16px;
     }

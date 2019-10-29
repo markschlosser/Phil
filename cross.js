@@ -43,6 +43,7 @@ const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 
 let history = [];
 let isSymmetrical = true;
+let isCircleDefault = true;
 let isStrictMatching = false;
 let isDarkMode = false;
 let grid;
@@ -363,14 +364,18 @@ class Action {
         }
         break;
       case "toggleCircle":
-        let cell = getGridSquare(state.row, state.col);
-        if (cell.querySelector(".circle")) {
-          cell.removeChild(cell.querySelector(".circle"));
+        let cell = getGridSquare(current.row, current.col);
+        let type = isCircleDefault ? "circle" : "shade";
+        if (cell.querySelector("." + type)) {
+          cell.removeChild(cell.querySelector("." + type));
         } else {
-          let circle = document.createElement("DIV");
-          circle.setAttribute("class", "circle");
-          cell.appendChild(circle);
+          let div = document.createElement("DIV");
+          div.setAttribute("class", type);
+          cell.appendChild(div);
         }
+        break;
+      case "switchCirclesShades":
+        switchCirclesShades();
         break;
       case "autoFill":
         for (let i = 0; i < xw.rows; i++) {
@@ -535,7 +540,7 @@ function keyboardHandler(e) {
     enterRebus(e);
   }
   if (e.key == BACKTICK) {
-    toggleCircle();
+    toggleCircle(isCircleDefault);
   }
   if (e.key == ENTER) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
@@ -1228,21 +1233,27 @@ function enterRebus(e) {
   grid.focus();
 }
 
-function toggleCircle() {
-  let activeCell = getGridSquare(current.row, current.col);
-  if (activeCell.querySelector(".circle")) {
-    activeCell.removeChild(activeCell.querySelector(".circle"));
-  } else {
-    let circle = document.createElement("DIV");
-    circle.setAttribute("class", "circle");
-    activeCell.appendChild(circle);
-  }
-  updateUI();
+function toggleCircle(useCircle = true) {
   let state = {
     "row": current.row,
     "col": current.col,
     "direction": current.direction
   };
+  if (useCircle != isCircleDefault) {
+    switchCirclesShades();
+    actionTimeline.record(new Action("switchCirclesShades", state));
+    return;
+  }
+  let activeCell = getGridSquare(current.row, current.col);
+  let type = isCircleDefault ? "circle" : "shade";
+  if (activeCell.querySelector("." + type)) {
+    activeCell.removeChild(activeCell.querySelector("." + type));
+  } else {
+    let div = document.createElement("DIV");
+    div.setAttribute("class", type);
+    activeCell.appendChild(div);
+  }
+  updateUI();
   actionTimeline.record(new Action("toggleCircle", state));
   if (current.direction == ACROSS) {
     e = new KeyboardEvent("keydown", {"key": ARROW_RIGHT});
@@ -1251,6 +1262,32 @@ function toggleCircle() {
   }
   keyboardHandler(e);
   grid.focus();
+}
+
+function toggleShade() {
+  toggleCircle(false);
+}
+
+function switchCirclesShades() {
+  isCircleDefault = !isCircleDefault;
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      let cell = getGridSquare(i, j);
+      let circle = cell.querySelector(".circle");
+      let shade = cell.querySelector(".shade");
+      if (circle) {
+        let newShade = document.createElement("DIV");
+        newShade.setAttribute("class", "shade");
+        cell.appendChild(newShade);
+        cell.removeChild(circle);
+      } else if (shade) {
+        let newCircle = document.createElement("DIV");
+        newCircle.setAttribute("class", "circle");
+        cell.appendChild(newCircle);
+        cell.removeChild(shade);
+      }
+    }
+  }
 }
 
 function undo() {

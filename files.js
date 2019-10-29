@@ -105,8 +105,6 @@ class PuzReader {
     // console.log(extras);
     if ("GEXT" in extras) {
       json.circles = extras.GEXT.map(c => c == 128);
-    } else {
-      json.circles = new Array(grid.length).fill(0);
     }
     if ("RTBL" in extras && "GRBS" in extras) {
       let rebusTable = {};
@@ -317,6 +315,19 @@ class PuzWriter {
       let rtblCksum = this.checksumRegion(rtblStart, rtblLength, 0);
       this.setShort(rtblStart - 2, rtblCksum);
     }
+    if (json.circles) {
+      this.writeExtraTitle("GEXT");
+      this.pad(4);
+      let gextStart = this.buf.length;
+      for (let c of json.circles) {
+        this.buf.push(c ? 128 : 0);
+      }
+      let gextLength = this.buf.length - gextStart;
+      this.setShort(gextStart - 4, gextLength);
+      let gextCksum = this.checksumRegion(gextStart, gextLength, 0);
+      this.setShort(gextStart - 2, gextCksum);
+      this.buf.push(0);
+    }
   }
 
   generateRTBL(rebusList) {
@@ -408,6 +419,13 @@ function openFile(e) {
   }
 }
 
+// in case imported json clues use html entities, as with xwordinfo
+function decodeHtml(html) {
+  let txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
+
 function convertJSONToPuzzle(puz) {
   createNewPuzzle(puz.size.rows, puz.size.cols);
   // Update puzzle title, author
@@ -429,9 +447,9 @@ function convertJSONToPuzzle(puz) {
         fillDiv.classList.add("rebus");
       }
       if (puz.circles && puz.circles[k] == 1) {
-        let circle = document.createElement("DIV");
-        circle.setAttribute("class", "circle");
-        td.appendChild(circle);
+        let div = document.createElement("DIV");
+        div.setAttribute("class", puz.shadecircles ? "shade" : "circle");
+        td.appendChild(div);
       }
     }
   }
@@ -448,12 +466,12 @@ function convertJSONToPuzzle(puz) {
         const label = activeCell.querySelector(".label").innerHTML + ".";
         for (let k = 0; k < puz.clues.across.length; k++) {
           if (label == puz.clues.across[k].slice(0, label.length)) {
-            xw.clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
+            xw.clues[[i, j, ACROSS]] = decodeHtml(puz.clues.across[k].slice(label.length).trim());
           }
         }
         for (let l = 0; l < puz.clues.down.length; l++) {
           if (label == puz.clues.down[l].slice(0, label.length)) {
-            xw.clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
+            xw.clues[[i, j, DOWN]] = decodeHtml(puz.clues.down[l].slice(label.length).trim());
           }
         }
       }
@@ -511,14 +529,24 @@ function convertPuzzleToJSON() {
   }
   // Read grid
   puz.grid = [];
-  puz.circles = [];
+  let circles = [];
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       puz.grid.push(xw.fill[i][j]);
       let square = getGridSquare(i, j);
-      puz.circles.push(square.querySelector(".circle") ? 1 : 0);
+      if (square.querySelector(".circle")) {
+        circles.push(1);
+        //xwordinfo json key, true if shades instead of circles
+        puz.shadecircles = false;
+      } else if (square.querySelector(".shade")) {
+        circles.push(1);
+        puz.shadecircles = true;
+      } else {
+        circles.push(0);
+      }
     }
   }
+  if ("shadecircles" in puz) puz.circles = circles;
   return puz;
 }
 
@@ -635,10 +663,14 @@ function layoutPDFGrid(doc, format, isFilled) {
   doc.setLineWidth(format.innerLineWidth);
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      doc.setFillColor(xw.fill[i][j] == BLOCK ? 0 : 255);
+      const cell = getGridSquare(i, j);
+      if (cell.querySelector(".shade")) {
+        doc.setFillColor(190);
+      } else {
+        doc.setFillColor(xw.fill[i][j] == BLOCK ? 0 : 255);
+      }
       doc.rect(format.gridOrigin.x + (j * format.squareSize),
                format.gridOrigin.y + (i * format.squareSize), format.squareSize, format.squareSize, 'FD');
-      const cell = getGridSquare(i, j);
       if (cell.querySelector(".circle")) {
         doc.circle(format.gridOrigin.x + ((j + 0.5) * format.squareSize),
                    format.gridOrigin.y + ((i + 0.5) * format.squareSize), format.squareSize/2);

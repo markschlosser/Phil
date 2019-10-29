@@ -10,14 +10,14 @@ Phil helps you make crosswords, using client-side JavaScript.
 
 New to this fork:
 * [Bob Copeland's](https://github.com/bcopeland) JS auto filler
-* NYT Sunday grid (21×21) support
 * Custom grid sizes
+* NYT Sunday grid (21×21) PDF submissions
 * Strict matching mode (fill suggestions filtered by crossers' constraints)
 * Interactive stats
 * Dark mode
 * Mobile support
-* Rebus support
-* Circle support
+* Rebus
+* Circles and shades
 * Undo/redo
 
 TODO:

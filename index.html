@@ -86,7 +86,15 @@
       <button id="enter-rebus" type="submit" form="enter-rebus-form" data-tooltip="Enter rebus" onmouseenter="showMenu(event)">
         <i class="fa fa-eye fa-fw" aria-hidden="true"></i>
       </button>
-      <button id="add-circle" type="button" data-tooltip="Toggle circle" onmouseenter="showMenu(event)" onclick="toggleCircle()">
+      <div id="toggle-special-menu" class="menu hidden" onmouseleave="hideMenu(event)">
+        <button id="toggle-circle" class="default" type="button" data-tooltip="Toggle circle" onmouseup="setDefault(event)" onclick="toggleCircle(true)">
+          <i class="fa fa-circle-thin fa-fw" aria-hidden="true"></i>
+        </button>
+        <button id="toggle-shade" type="button" data-tooltip="Toggle shade" onmouseup="setDefault(event)" onclick="toggleCircle(false)">
+          <i class="fa fa-tint fa-fw" aria-hidden="true"></i>
+        </button>
+      </div>
+      <button id="toggle-special" type="button" data-tooltip="Toggle special" onmouseenter="showMenu(event)" onclick="doDefault(event)">
         <i class="fa fa-circle-thin fa-fw" aria-hidden="true"></i>
       </button>
     </div>
@@ -94,7 +102,7 @@
     <div class="divider"></div>
 
     <div class="section">
-      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generatePattern()">
+      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
         <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
       </button>
       <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="hidden">
@@ -195,7 +203,7 @@
         <tr> <td>Toggle block</td> <td><kbd>.</kbd></td> </tr>
         <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
         <tr> <td>Enter rebus</td> <td><kbd>Esc</kbd></td> </tr>
-        <tr> <td>Toggle circle</td> <td><kbd>`</kbd></td> </tr>
+        <tr> <td>Toggle circle/shade</td> <td><kbd>`</kbd></td> </tr>
       </table>
     </div>
     <div id="credits">
