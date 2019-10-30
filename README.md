@@ -21,8 +21,8 @@ New to this fork:
 * Undo/redo
 
 TODO:
-* .xpf and .xd support
-* Autofill improvements and integration
+* Autofill region, ui integration, scored word lists, choose among fills
+* Fill suggestions letters histogram 
 * Better responsive layout
 
 ## Acknowledgements
