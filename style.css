@@ -19,6 +19,7 @@
   --grid-border-color: black;
   --grid-sat-color: rgb(0, 255, 0);
   --grid-unsat-color: rgb(255, 51, 51);
+  --chart-label-zero-color: rgb(145, 17, 10);
   --font-family-sans: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
   --font-family-mono: "SFMono-Regular", "Consolas", "DejaVuSansMono", "Menlo", monospace;
 }
@@ -28,7 +29,7 @@
   --primary-color: rgba(171, 178, 191);
   --secondary-color: rgb(157, 165, 179);
   --tertiary-color: rgb(116, 123, 133);
-  --quaternary-color: rgb(75, 83, 99);
+  --quaternary-color: rgb(27, 29, 35);
   --shade-color: rgb(96, 103, 116);
   --highlight-color: rgba(89, 147, 255, 0.6);
   --highlight-active-color: rgba(90, 135, 220, 0.4);
@@ -514,6 +515,15 @@ kbd {
   top: 0px;
 }
 
+#matches-charts {
+  float: left;
+}
+
+#matches-charts .chart {
+  display: block;
+  /* margin-top: 45px; */
+}
+
 #stats {
   float: left;
   margin-left: 8px;
@@ -533,12 +543,13 @@ kbd {
 #stats table {
   color: var(--secondary-color);
   font-weight: 300;
-  font-size: 14;
+  font-size: 12px;
+  line-height: 1.42;
 }
 
 #stats .stats-number {
   font-family: var(--font-family-mono);
-  font-size: 12;
+  font-size: 11;
   font-weight: 100;
   vertical-align: bottom;
 }
@@ -638,6 +649,9 @@ kbd {
 
 @media not all and (hover: hover) and (pointer: fine) {
   #stats {
+    display: none;
+  }
+  #matches-charts {
     display: none;
   }
   @media screen and (orientation: portrait) {

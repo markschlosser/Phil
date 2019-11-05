@@ -6,7 +6,12 @@ Chart.defaults.global.defaultFontColor =
 var letterChart;
 var wordChart;
 
-class BarChartSpec {
+alphabet = [
+  'A','B','C','D','E','F','G','H','I','J','K','L','M',
+  'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+];
+
+class StatChartSpec {
   constructor(id, label, labels, data, hoverFunction) {
     this.ctx = document.getElementById(id);
     this.config = {
@@ -17,20 +22,26 @@ class BarChartSpec {
             datasets: [{
                 label: label,
                 data: data,
-                backgroundColor: getComputedStyle(document.body).getPropertyValue('--tertiary-color'),
-                borderColor: getComputedStyle(document.body).getPropertyValue('--secondary-color'),
-                borderWidth: 1
+                backgroundColor: getComputedStyle(document.body).getPropertyValue('--quaternary-color'),
+                borderColor: getComputedStyle(document.body).getPropertyValue('--shade-color'),
+                borderWidth: 1,
+                hoverBackgroundColor: getComputedStyle(document.body).getPropertyValue('--shade-color'),
+                hoverBorderColor: getComputedStyle(document.body).getPropertyValue('--tertiary-color')
             }]
         },
         options: {
             plugins: {
                 datalabels: {
-                    anchor: 'end',
-                    align: 'end',
-                    offset: -2,
+                    // anchor: 'end',
+                    // align: 'end',
+                    // offset: -2,
+                    align: 'bottom',
+                    offset: -8.75,
                     font: {
-                        size: 10
-                    }
+                        size: 9
+                    },
+                    color: getComputedStyle(document.body).getPropertyValue('--primary-color'),
+                    display: function(ctx) {return ctx.dataset.data[ctx.dataIndex] != 0 ;}
                 }
             },
             onHover: hoverFunction,
@@ -50,14 +61,18 @@ class BarChartSpec {
                         display: false
                     },
                     ticks: {
-                        max: Math.max(...data) + 10,
+                        max: Math.max(1, Math.max(...data)), //+ 10
                         display: false,
-                        beginAtZero: true
+                        beginAtZero: true,
+                        sampleSize: 0
                     }
                 }],
                 yAxes: [{
                     gridLines: {
                         display: false
+                    },
+                    ticks: {
+                        sampleSize: 0
                     }
                 }]
             },
@@ -68,12 +83,111 @@ class BarChartSpec {
   }
 }
 
+class MatchesChartSpec {
+  constructor(id, label, labels, data) {
+    this.ctx = document.getElementById(id);
+    this.config = {
+        type: 'horizontalBar',
+        // type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: label,
+                data: data,
+                backgroundColor: getComputedStyle(document.body).getPropertyValue('--quaternary-color'),
+                borderColor: getComputedStyle(document.body).getPropertyValue('--shade-color'),
+                borderWidth: 1,
+                hoverBackgroundColor: getComputedStyle(document.body).getPropertyValue('--quaternary-color'),
+                hoverBorderColor: getComputedStyle(document.body).getPropertyValue('--shade-color')
+            }]
+        },
+        options: {
+            animation: {
+                duration: 0 // general animation time
+            },
+            hover: {
+                animationDuration: 0 // duration of animations when hovering an item
+            },
+            responsiveAnimationDuration: 0, // animation duration after a resize
+            plugins: {
+                datalabels: {
+                    align: 'bottom',
+                    offset: -8.5,
+                    font: {
+                        size: 8,
+                    },
+                    color: function(ctx) {
+                      let count = ctx.dataset.data[ctx.dataIndex];
+                      if (count > 0) {
+                        // if (10 * count < Math.max(...ctx.dataset.data)) {
+                        //   return getComputedStyle(document.body).getPropertyValue('--primary-color');
+                        // } else {
+                        return getComputedStyle(document.body).getPropertyValue('--primary-color');
+                        // }
+                      }
+                      else {
+                        return getComputedStyle(document.body).getPropertyValue('--chart-label-zero-color');
+                      }
+                    }
+                    // display: function(ctx) {return ctx.dataset.data[ctx.dataIndex] != 0 ;}
+                }
+            },
+            tooltips: {
+                "enabled": false
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                xAxes: [{
+                    display: false,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: {
+                        max: Math.max(1, Math.max(...data)),
+                        display: false,
+                        beginAtZero: true,
+                        sampleSize: 0
+                    }
+                }],
+                yAxes: [{
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        sampleSize: 0
+                   },
+                   categoryPercentage: 0.95,
+                   barPercentage: 1
+                }]
+            },
+            responsive: true,
+            maintainAspectRatio: true
+        }
+    };
+  }
+}
+
+let acrossChartSpec = new MatchesChartSpec(
+  'across-chart',
+  'Across matches',
+  alphabet,
+  new Array(this.alphabet.length).fill(0)
+);
+acrossChart = new Chart(acrossChartSpec.ctx, acrossChartSpec.config);
+let downChartSpec = new MatchesChartSpec(
+  'down-chart',
+  'Down matches',
+  alphabet,
+  new Array(this.alphabet.length).fill(0)
+);
+downChart = new Chart(downChartSpec.ctx, downChartSpec.config);
+
 class Stats {
   constructor() {
-    this.alphabet = [
-      'A','B','C','D','E','F','G','H','I','J','K','L','M',
-      'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-    ];
+    this.alphabet = alphabet;
     this.scrabblePoints = [1,3,3,2,1,4,2,4,1,8,5,1,3,1,1,3,10,1,1,1,1,4,4,8,4,10];
     this.letterCounts = new Array(this.alphabet.length).fill(0);
     this.letters = 0;
@@ -186,7 +300,7 @@ function updateStatsUI(init) {
       wordChart.destroy();
     }
     stats = new Stats();
-    let letterChartSpec = new BarChartSpec(
+    let letterChartSpec = new StatChartSpec(
       'letter-chart',
       'Letters',
       // stats.alphabet.map(a => a.toLowerCase()),
@@ -195,7 +309,7 @@ function updateStatsUI(init) {
       hoverLetterChart
     );
     letterChart = new Chart(letterChartSpec.ctx, letterChartSpec.config);
-    let wordChartSpec = new BarChartSpec(
+    let wordChartSpec = new StatChartSpec(
       'word-chart',
       'Words',
       stats.wordLengths,
@@ -206,10 +320,10 @@ function updateStatsUI(init) {
   } else {
     stats.update();
     letterChart.data.datasets[0].data = stats.letterCounts;
-    letterChart.options.scales.xAxes[0].ticks.max = Math.max(...stats.letterCounts) + 10;
+    letterChart.options.scales.xAxes[0].ticks.max = Math.max(...stats.letterCounts); //+ 10
     letterChart.update();
     wordChart.data.datasets[0].data = stats.wordCounts;
-    wordChart.options.scales.xAxes[0].ticks.max = Math.max(...stats.wordCounts) + 10;
+    wordChart.options.scales.xAxes[0].ticks.max = Math.max(...stats.wordCounts); //+ 10
     wordChart.update();
   }
   updateStatsTable();
@@ -239,14 +353,34 @@ function preciseRound(num, decimals) {
 
 function updateStatsUIColors() {
   let fontColor = getComputedStyle(document.body).getPropertyValue('--secondary-color');
-  let barColor = getComputedStyle(document.body).getPropertyValue('--tertiary-color');
+  let backgroundColor = getComputedStyle(document.body).getPropertyValue('--quaternary-color');
+  let borderColor = getComputedStyle(document.body).getPropertyValue('--shade-color');
+  let labelColor = getComputedStyle(document.body).getPropertyValue('--primary-color');
+  let hoverBackgroundColor = getComputedStyle(document.body).getPropertyValue('--shade-color');
+  let hoverBorderColor = getComputedStyle(document.body).getPropertyValue('--tertiary-color');
   Chart.defaults.global.defaultFontColor = fontColor;
-  letterChart.data.datasets[0].backgroundColor = barColor;
-  letterChart.data.datasets[0].borderColor = fontColor;
-  wordChart.data.datasets[0].backgroundColor = barColor;
-  wordChart.data.datasets[0].borderColor = fontColor;
+  letterChart.data.datasets[0].backgroundColor = backgroundColor;
+  letterChart.data.datasets[0].borderColor = borderColor;
+  letterChart.data.datasets[0].hoverBackgroundColor = hoverBackgroundColor;
+  letterChart.data.datasets[0].hoverBorderColor = hoverBorderColor;
+  letterChart.options.plugins.datalabels.color = labelColor;
+  wordChart.data.datasets[0].backgroundColor = backgroundColor;
+  wordChart.data.datasets[0].borderColor = borderColor;
+  wordChart.data.datasets[0].hoverBackgroundColor = hoverBackgroundColor;
+  wordChart.data.datasets[0].hoverBorderColor = hoverBorderColor;
+  wordChart.options.plugins.datalabels.color = labelColor;
+  acrossChart.data.datasets[0].backgroundColor = backgroundColor;
+  acrossChart.data.datasets[0].borderColor = borderColor;
+  acrossChart.data.datasets[0].hoverBackgroundColor = backgroundColor;
+  acrossChart.data.datasets[0].hoverBorderColor = borderColor;
+  downChart.data.datasets[0].backgroundColor = backgroundColor;
+  downChart.data.datasets[0].borderColor = borderColor;
+  downChart.data.datasets[0].hoverBackgroundColor = backgroundColor;
+  downChart.data.datasets[0].hoverBorderColor = borderColor;
   letterChart.update();
   wordChart.update();
+  acrossChart.update();
+  downChart.update();
 }
 
 hoverLetterIndex = null;

@@ -169,25 +169,30 @@
     </div>
   </div>
 
+  <div id="matches-charts">
+    <canvas id="across-chart" class="chart" width="75" height="275"></canvas>
+    <canvas id="down-chart" class="chart" width="75" height="275"></canvas>
+  </div>
+
   <div id="stats">
     <div id="charts">
       <div class="chart">
         <div id="letter-chart-title" class="chart-title">Letters</div>
-        <canvas id="letter-chart" width="150" height="400"></canvas>
+        <canvas id="letter-chart" width="100" height="400"></canvas>
       </div>
       <div class="chart">
         <div id="word-chart-title" class="chart-title">Word lengths</div>
-        <canvas id="word-chart" width="150" height="400"></canvas>
+        <canvas id="word-chart" width="100" height="400"></canvas>
       </div>
     </div>
     <table id="stats-table">
       <tr> <td>Words: </td> <td id="stats-words" class="stats-number"></td> </tr>
-      <tr> <td>Average word length: </td> <td id="stats-avg-word-length" class="stats-number"></td> </tr>
+      <tr> <td>Mean word length: </td> <td id="stats-avg-word-length" class="stats-number"></td> </tr>
       <tr> <td>Blocks: </td> <td id="stats-blocks" class="stats-number"></td> </tr>
-      <tr> <td>Fully connected squares: </td> <td id="stats-fully-connected-squares" class="stats-number"></td> </tr>
+      <tr class="hidden"> <td>Fully connected squares: </td> <td id="stats-fully-connected-squares" class="stats-number"></td> </tr>
       <tr> <td>Open squares: </td> <td id="stats-open-squares" class="stats-number"></td> </tr>
       <tr> <td>Letters: </td> <td id="stats-letters" class="stats-number"></td> </tr>
-      <tr> <td>Average Scrabble points: </td> <td id="stats-avg-scrabble-points" class="stats-number"></td> </tr>
+      <tr> <td>Mean Scrabble points: </td> <td id="stats-avg-scrabble-points" class="stats-number"></td> </tr>
     </table>
   </div>
 

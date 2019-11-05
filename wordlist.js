@@ -176,21 +176,43 @@ function updateMatchesUI() {
     acrossMatches = matchFromWordlist(current.acrossWord);
     downMatches = matchFromWordlist(current.downWord);
   }
+
+  let row = getLine(ACROSS, current.row);
+  let acrossWordUpto = row.slice(current.acrossStartIndex, current.col);
+  let acrossIndex = acrossWordUpto.reduce((a,b) => a + b.length, 0);
+  let acrossHist = new Array(alphabet.length).fill(0);
   for (let i = 0; i < acrossMatches.length; i++) {
+    let match = acrossMatches[i];
     let li = document.createElement("LI");
-    li.innerHTML = acrossMatches[i].toLowerCase();
+    li.innerHTML = match;
     li.className = "";
     // li.addEventListener('click', printScore);
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
+    let alphabetIndex = alphabet.indexOf(match[acrossIndex]);
+    if (alphabetIndex >= 0) acrossHist[alphabetIndex]++;
   }
+  acrossChart.data.datasets[0].data = acrossHist;
+  acrossChart.options.scales.xAxes[0].ticks.max = Math.max(1, Math.max(...acrossHist));
+  acrossChart.update();
+
+  let col = getLine(DOWN, current.col);
+  let downWordUpto = col.slice(current.downStartIndex, current.row);
+  let downIndex = downWordUpto.reduce((a,b) => a + b.length, 0);
+  let downHist = new Array(alphabet.length).fill(0);
   for (let i = 0; i < downMatches.length; i++) {
+    let match = downMatches[i];
     let li = document.createElement("LI");
-    li.innerHTML = downMatches[i].toLowerCase();
+    li.innerHTML = match;
     li.className = "";
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
+    let alphabetIndex = alphabet.indexOf(match[downIndex]);
+    if (alphabetIndex >= 0) downHist[alphabetIndex]++;
   }
+  downChart.data.datasets[0].data = downHist;
+  downChart.options.scales.xAxes[0].ticks.max = Math.max(1, Math.max(...downHist));
+  downChart.update();
 }
 
 function fillGridWithMatch(e) {

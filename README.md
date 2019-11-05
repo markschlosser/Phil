@@ -12,17 +12,17 @@ New to this fork:
 * [Bob Copeland's](https://github.com/bcopeland) JS auto filler
 * Custom grid sizes
 * NYT Sunday grid (21×21) PDF submissions
-* Strict matching mode (fill suggestions filtered by crossers' constraints)
+* Strict matching mode (matches filtered by crossers' constraints)
 * Interactive stats
 * Dark mode
 * Mobile support
 * Rebus
 * Circles and shades
 * Undo/redo
+* Match letter histograms
 
 TODO:
 * Autofill region, ui integration, scored word lists, choose among fills
-* Fill suggestions letters histogram 
 * Better responsive layout
 
 ## Acknowledgements
