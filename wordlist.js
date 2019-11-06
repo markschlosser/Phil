@@ -194,7 +194,6 @@ function updateMatchesUI() {
   }
   acrossChart.data.datasets[0].data = acrossHist;
   acrossChart.options.scales.xAxes[0].ticks.max = Math.max(1, Math.max(...acrossHist));
-  acrossChart.update();
 
   let col = getLine(DOWN, current.col);
   let downWordUpto = col.slice(current.downStartIndex, current.row);
@@ -212,6 +211,13 @@ function updateMatchesUI() {
   }
   downChart.data.datasets[0].data = downHist;
   downChart.options.scales.xAxes[0].ticks.max = Math.max(1, Math.max(...downHist));
+
+  let primary = getComputedStyle(document.body).getPropertyValue('--primary-color');
+  let zero = getComputedStyle(document.body).getPropertyValue('--chart-label-zero-color');
+  let labelColors = acrossHist.map((x, i) => x && downHist[i] ? primary : zero);
+  acrossChart.options.plugins.datalabels.color = labelColors;
+  downChart.options.plugins.datalabels.color = labelColors;
+  acrossChart.update();
   downChart.update();
 }
 

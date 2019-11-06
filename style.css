@@ -236,7 +236,6 @@ kbd {
 }
 
 .notification td {
-  /*border: 1px solid red;*/
   padding: 8px 5px 8px 0;
   border-bottom: 1px solid var(--border-trans-color);
 }
@@ -517,11 +516,16 @@ kbd {
 
 #matches-charts {
   float: left;
+  height: 550px;
 }
 
 #matches-charts .chart {
   display: block;
-  /* margin-top: 45px; */
+  border-top: 1px solid var(--background-color);
+}
+
+#matches-charts .chart.highlight {
+  border-top: 1px solid var(--highlight-border-color);
 }
 
 #stats {

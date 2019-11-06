@@ -381,6 +381,7 @@ function updateStatsUIColors() {
   wordChart.update();
   acrossChart.update();
   downChart.update();
+  updateMatchesUI();
 }
 
 hoverLetterIndex = null;

@@ -877,16 +877,22 @@ function updateGridHighlights() {
 function updateSidebarHighlights() {
   let acrossHeading = document.getElementById("across-heading");
   let downHeading = document.getElementById("down-heading");
+  let acrossChart = document.getElementById("across-chart");
+  let downChart = document.getElementById("down-chart");
   const currentCell = getGridSquare(current.row, current.col);
 
   acrossHeading.classList.remove("highlight");
   downHeading.classList.remove("highlight");
+  acrossChart.classList.remove("highlight");
+  downChart.classList.remove("highlight");
 
   if (!currentCell.classList.contains("block")) {
     if (current.direction == ACROSS) {
       acrossHeading.classList.add("highlight");
+      acrossChart.classList.add("highlight");
     } else {
       downHeading.classList.add("highlight");
+      downChart.classList.add("highlight");
     }
   }
 }
