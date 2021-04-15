@@ -63,7 +63,7 @@ To run this fork locally:
 
 * [OneLook](http://onelook.com/) and [Crossword Tracker](http://crosswordtracker.com/) search engines
 * [XWord Info](https://www.xwordinfo.com) (some features require membership)
-* [Crosshare](crosshare.org), a nice site to construct and share crossword puzzles, and play puzzles shared by others
+* [Crosshare](https://crosshare.org), a nice site to construct and share crossword puzzles, and play puzzles shared by others
 * [Collected wordlists](http://wiki.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start) of the National Puzzler's League
 * [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
 
