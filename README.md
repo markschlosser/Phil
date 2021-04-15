@@ -22,12 +22,22 @@ New to this fork:
 * Match letter histograms
 
 TODO:
+* copy current word into Onelook/xwordinfo pattern
+* allow circles and shades in same puzzle or even square
+* grid generation CSP: width, height, number of words, mean word length, block %, open %, sym, at least n words of length m
+* larger wordlist, grid bank
+* Scored word list
+* Show word scores in matches list, sort alphabetically or by score
+* Character classes in squares, with vowel and consonant shorthands
+* Option move/delete
+* Add to and remove from wordlist
+* Save edited wordlist
 * Autofill region, ui integration, scored word lists, choose among fills
 * Better responsive layout
 
 ## Acknowledgements
 
-Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) and [fonticon](https://github.com/devgg/FontIcon) for icons, [jsPDF](https://github.com/MrRio/jsPDF/) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/) for generating PDFs, and [Chart.js](https://github.com/chartjs) with the [datalabels](https://github.com/chartjs/chartjs-plugin-datalabels) plugin for charts. Thanks to those who documented the .puz file format [here](https://code.google.com/archive/p/puz/wikis/FileFormat.wiki).
+Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) and [fonticon](https://github.com/devgg/FontIcon) for icons, [jsPDF](https://github.com/MrRio/jsPDF/) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/) for generating PDFs, and [Chart.js](https://github.com/chartjs) with the [datalabels](https://github.com/chartjs/chartjs-plugin-datalabels) plugin for charts. Thanks to those who documented the .puz file format [here](https://code.google.com/archive/p/puz/wikis/FileFormat.wiki). The default wordlist is [Peter Broda's wordlist](https://peterbroda.me/crosswords/wordlist/).
 
 ## Getting started
 
@@ -41,16 +51,10 @@ To run this fork locally:
 
 2. Enter the Phil directory.
 
-3. Run a local webserver. If you have Python 3 installed, then:
+3. Run a local webserver. For example, with Python 3:
 
    ```
-   python3 -m http.server 8000
-   ```
-
-   If you have only Python 2 installed, then:
-
-   ```
-   python -m SimpleHTTPServer 8000
+   python -m http.server 8000
    ```
 
 4. Point your browser to [localhost:8000](http://localhost:8000).
@@ -59,6 +63,7 @@ To run this fork locally:
 
 * [OneLook](http://onelook.com/) and [Crossword Tracker](http://crosswordtracker.com/) search engines
 * [XWord Info](https://www.xwordinfo.com) (some features require membership)
+* [Crosshare](crosshare.org), a nice site to construct and share crossword puzzles, and play puzzles shared by others
 * [Collected wordlists](http://wiki.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start) of the National Puzzler's League
 * [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
 

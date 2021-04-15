@@ -25,7 +25,7 @@ let wordlist = [
   [], [], [], [], [], []
 ];
 
-openDefaultWordlist("https://raw.githubusercontent.com/jmviz/Phil/master/WL-SP.txt");
+openDefaultWordlist("https://raw.githubusercontent.com/jmviz/Phil/master/wordlists/peter-broda-wordlist__unscored.txt");
 
 //____________________
 // F U N C T I O N S
@@ -79,12 +79,14 @@ function openDefaultWordlist(url) {
   let textFile = new XMLHttpRequest();
   textFile.open("GET", url, true);
   textFile.onreadystatechange = function() {
-    if (textFile.readyState === 4 && textFile.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
+    // Makes sure the document is ready to parse, and it's found the file.
+    if (textFile.readyState === 4 && textFile.status === 200) {  
+      gotRemoteWordlist = true;
       const words = textFile.responseText.split(/\s/g);
       addToWordlist(words);
       sortWordlist();
-      console.log("Loaded default wordlist.");
-    }
+      console.log("Loaded default wordlist from remote.");
+    } else {}
   };
   textFile.send(null);
 }
