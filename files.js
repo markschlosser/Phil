@@ -447,7 +447,7 @@ function convertJSONToPuzzle(puz) {
         fillDiv.classList.add("rebus");
       }
       if (puz.circles && puz.circles[k] == 1) {
-        let div = document.createElement("DIV");
+        let div = document.createElement("div");
         div.setAttribute("class", puz.shadecircles ? "shade" : "circle");
         td.appendChild(div);
       }

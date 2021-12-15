@@ -306,7 +306,7 @@ kbd {
 #sidebar ul.matches {
   font-family: var(--font-family-mono);
   margin: 0;
-  height: 76%;
+  height: 84%;
   /*width: 160px;*/
   list-style-type: none;
   padding: 0;

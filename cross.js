@@ -75,25 +75,25 @@ class Crossword {
 class Grid {
   constructor(rows, cols) {
     document.getElementById("grid-container").innerHTML = "";
-    grid = document.createElement("TABLE");
+    grid = document.createElement("table");
     grid.setAttribute("id", "grid");
     grid.setAttribute("tabindex", "1");
     document.getElementById("grid-container").appendChild(grid);
 
     for (let i = 0; i < rows; i++) {
-        let row = document.createElement("TR");
+        let row = document.createElement("tr");
         row.setAttribute("data-row", i);
         document.getElementById("grid").appendChild(row);
 
       for (let j = 0; j < cols; j++) {
-          let col = document.createElement("TD");
+          let col = document.createElement("td");
           col.setAttribute("data-col", j);
 
-          let label = document.createElement("DIV");
+          let label = document.createElement("div");
           label.setAttribute("class", "label");
           let labelContent = document.createTextNode("");
 
-          let fill = document.createElement("DIV");
+          let fill = document.createElement("div");
           fill.setAttribute("class", "fill");
           let fillContent = document.createTextNode(xw.fill[i][j]);
 
@@ -173,7 +173,7 @@ class Menu { // in dev
     this.id = id;
     this.buttons = buttons;
 
-    let div = document.createElement("DIV");
+    let div = document.createElement("div");
     div.setAttribute("id", this.id);
     for (var button in buttons) {
       div.appendChild(button);
@@ -220,7 +220,7 @@ class Notification {
   }
 
   post() {
-    let div = document.createElement("DIV");
+    let div = document.createElement("div");
     div.setAttribute("id", this.id);
     div.setAttribute("class", "notification");
     div.innerHTML = this.message;
@@ -355,7 +355,7 @@ class Action {
         if (cell.querySelector("." + type)) {
           cell.removeChild(cell.querySelector("." + type));
         } else {
-          let div = document.createElement("DIV");
+          let div = document.createElement("div");
           div.setAttribute("class", type);
           cell.appendChild(div);
         }
@@ -519,26 +519,26 @@ function updateInfoUI() {
 }
 
 function createGrid(rows, cols) {
-  grid = document.createElement("TABLE");
+  grid = document.createElement("table");
   grid.setAttribute("id", "grid");
   grid.setAttribute("tabindex", "1");
   // grid.setAttribute("tabindex", "0");
   document.getElementById("grid-container").appendChild(grid);
 
 	for (let i = 0; i < rows; i++) {
-    	let row = document.createElement("TR");
+    	let row = document.createElement("tr");
     	row.setAttribute("data-row", i);
     	document.getElementById("grid").appendChild(row);
 
 		for (let j = 0; j < cols; j++) {
-		    let col = document.createElement("TD");
+		    let col = document.createElement("td");
         col.setAttribute("data-col", j);
 
-        let label = document.createElement("DIV");
+        let label = document.createElement("div");
         label.setAttribute("class", "label");
         let labelContent = document.createTextNode("");
 
-        let fill = document.createElement("DIV");
+        let fill = document.createElement("div");
         fill.setAttribute("class", "fill");
         let fillContent = document.createTextNode(xw.fill[i][j]);
 
@@ -1067,7 +1067,7 @@ function toggleCircle(useCircle = true) {
   if (activeCell.querySelector("." + type)) {
     activeCell.removeChild(activeCell.querySelector("." + type));
   } else {
-    let div = document.createElement("DIV");
+    let div = document.createElement("div");
     div.setAttribute("class", type);
     activeCell.appendChild(div);
   }
@@ -1094,12 +1094,12 @@ function switchCirclesShades() {
       let circle = cell.querySelector(".circle");
       let shade = cell.querySelector(".shade");
       if (circle) {
-        let newShade = document.createElement("DIV");
+        let newShade = document.createElement("div");
         newShade.setAttribute("class", "shade");
         cell.appendChild(newShade);
         cell.removeChild(circle);
       } else if (shade) {
-        let newCircle = document.createElement("DIV");
+        let newCircle = document.createElement("div");
         newCircle.setAttribute("class", "circle");
         cell.appendChild(newCircle);
         cell.removeChild(shade);

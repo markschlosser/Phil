@@ -27,6 +27,41 @@ let wordlist = [
 
 openDefaultWordlist("https://raw.githubusercontent.com/jmviz/Phil/master/wordlists/peter-broda-wordlist__unscored.txt");
 
+let acrossMatchList = document.getElementById("across-matches");
+let downMatchList = document.getElementById("down-matches");
+
+acrossMatchList.addEventListener('dblclick', fillGridWithMatch);
+downMatchList.addEventListener('dblclick', fillGridWithMatch);
+
+let acrossMatches = [];
+let downMatches = [];
+
+let acrossMatchHyperListConfig = {
+  height: "84%",
+  itemHeight: 19,
+  total: 0,
+  generate(index) {
+    const el = document.createElement('li');
+    el.innerHTML = acrossMatches[index];
+    return el;
+  }
+}
+
+let downMatchHyperListConfig = {
+  height: "84%",
+  itemHeight: 19,
+  total: 0,
+  generate(index) {
+    const el = document.createElement('li');
+    el.innerHTML = downMatches[index];
+    return el;
+  }
+}
+
+let acrossMatchHyperList = HyperList.default.create(acrossMatchList, acrossMatchHyperListConfig);
+let downMatchHyperList = HyperList.default.create(downMatchList, downMatchHyperListConfig);
+
+
 //____________________
 // F U N C T I O N S
 
@@ -81,7 +116,6 @@ function openDefaultWordlist(url) {
   textFile.onreadystatechange = function() {
     // Makes sure the document is ready to parse, and it's found the file.
     if (textFile.readyState === 4 && textFile.status === 200) {  
-      gotRemoteWordlist = true;
       const words = textFile.responseText.split(/\s/g);
       addToWordlist(words);
       sortWordlist();
@@ -104,15 +138,15 @@ function removeWordlistDuplicates() {
 }
 
 function matchFromWordlist(word) {
-  const l = word.length;
+  const wordLength = word.length;
   const actualLettersInWord = word.replace(/-/g, "").length;
-  if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
+  if (actualLettersInWord < wordLength) { // Don't search if already filled
     word = word.split(DASH).join("\\w");
     const pattern = new RegExp(word);
     let matches = [];
-    for (let i = 0; i < wordlist[l].length; i++) {
-      if (wordlist[l][i].search(pattern) > -1) {
-        matches.push(wordlist[l][i]);
+    for (let i = 0; i < wordlist[wordLength].length; i++) {
+      if (wordlist[wordLength][i].search(pattern) > -1) {
+        matches.push(wordlist[wordLength][i]);
       }
     }
     return matches;
@@ -165,12 +199,8 @@ function matchWordStrict(square, direction, isFirstCall) {
 }
 
 function updateMatchesUI() {
-  let acrossMatchList = document.getElementById("across-matches");
-  let downMatchList = document.getElementById("down-matches");
-  acrossMatchList.innerHTML = "";
-  downMatchList.innerHTML = "";
-  let acrossMatches = [];
-  let downMatches = [];
+  acrossMatches = [];
+  downMatches = [];
   if (isStrictMatching) {
     acrossMatches = matchWordStrict(current, ACROSS, true);
     downMatches = matchWordStrict(current, DOWN, true);
@@ -179,18 +209,19 @@ function updateMatchesUI() {
     downMatches = matchFromWordlist(current.downWord);
   }
 
+  acrossMatchHyperListConfig.total = acrossMatches.length;
+  acrossMatchHyperList.refresh(acrossMatchList, acrossMatchHyperListConfig);
+  acrossMatchList.scrollTop = 0;
+  downMatchHyperListConfig.total = downMatches.length;
+  downMatchHyperList.refresh(downMatchList, downMatchHyperListConfig);
+  downMatchList.scrollTop = 0;
+
   let row = getLine(ACROSS, current.row);
   let acrossWordUpto = row.slice(current.acrossStartIndex, current.col);
   let acrossIndex = acrossWordUpto.reduce((a,b) => a + b.length, 0);
   let acrossHist = new Array(alphabet.length).fill(0);
   for (let i = 0; i < acrossMatches.length; i++) {
     let match = acrossMatches[i];
-    let li = document.createElement("LI");
-    li.innerHTML = match;
-    li.className = "";
-    // li.addEventListener('click', printScore);
-    li.addEventListener('dblclick', fillGridWithMatch);
-    acrossMatchList.appendChild(li);
     let alphabetIndex = alphabet.indexOf(match[acrossIndex]);
     if (alphabetIndex >= 0) acrossHist[alphabetIndex]++;
   }
@@ -203,11 +234,6 @@ function updateMatchesUI() {
   let downHist = new Array(alphabet.length).fill(0);
   for (let i = 0; i < downMatches.length; i++) {
     let match = downMatches[i];
-    let li = document.createElement("LI");
-    li.innerHTML = match;
-    li.className = "";
-    li.addEventListener('dblclick', fillGridWithMatch);
-    downMatchList.appendChild(li);
     let alphabetIndex = alphabet.indexOf(match[downIndex]);
     if (alphabetIndex >= 0) downHist[alphabetIndex]++;
   }
@@ -224,45 +250,47 @@ function updateMatchesUI() {
 }
 
 function fillGridWithMatch(e) {
-  const li = e.currentTarget;
-  const match = li.innerHTML.toUpperCase();
-  let k = 0;
-  let oldWord = [];
-  let newWord = [];
-  let start = -1;
-  let end = -1;
-  const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
-  if (dir == ACROSS) {
-    start = current.acrossStartIndex;
-    end = current.acrossEndIndex;
-    for (let j = start; j < end; j++) {
-      oldWord.push(xw.fill[current.row][j]);
-      xw.fill[current.row][j] = match.slice(k, k + xw.fill[current.row][j].length);
-      newWord.push(xw.fill[current.row][j]);
-      k += xw.fill[current.row][j].length;
+  if (e.target && e.target.matches("li")) {
+    const li = e.target;
+    const match = li.innerHTML.toUpperCase();
+    let k = 0;
+    let oldWord = [];
+    let newWord = [];
+    let start = -1;
+    let end = -1;
+    const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
+    if (dir == ACROSS) {
+      start = current.acrossStartIndex;
+      end = current.acrossEndIndex;
+      for (let j = start; j < end; j++) {
+        oldWord.push(xw.fill[current.row][j]);
+        xw.fill[current.row][j] = match.slice(k, k + xw.fill[current.row][j].length);
+        newWord.push(xw.fill[current.row][j]);
+        k += xw.fill[current.row][j].length;
+      }
+    } else {
+      start = current.downStartIndex;
+      end = current.downEndIndex;
+      for (let i = start; i < end; i++) {
+        oldWord.push(xw.fill[i][current.col]);
+        xw.fill[i][current.col] = match.slice(k, k + xw.fill[i][current.col].length);
+        newWord.push(xw.fill[i][current.col]);
+        k += xw.fill[i][current.col].length;
+      }
     }
-  } else {
-    start = current.downStartIndex;
-    end = current.downEndIndex;
-    for (let i = start; i < end; i++) {
-      oldWord.push(xw.fill[i][current.col]);
-      xw.fill[i][current.col] = match.slice(k, k + xw.fill[i][current.col].length);
-      newWord.push(xw.fill[i][current.col]);
-      k += xw.fill[i][current.col].length;
-    }
+    isMutated = true;
+    let state = {
+      "row": current.row,
+      "col": current.col,
+      "direction": dir,
+      "start": start,
+      "end": end,
+      "old": oldWord,
+      "new": newWord
+    };
+    actionTimeline.record(new Action("fillMatch", state));
+    console.log("Filled '" + li.innerHTML + "' going " + dir);
+    updateUI();
+    grid.focus();
   }
-  isMutated = true;
-  let state = {
-    "row": current.row,
-    "col": current.col,
-    "direction": dir,
-    "start": start,
-    "end": end,
-    "old": oldWord,
-    "new": newWord
-  };
-  actionTimeline.record(new Action("fillMatch", state));
-  console.log("Filled '" + li.innerHTML + "' going " + dir);
-  updateUI();
-  grid.focus();
 }
