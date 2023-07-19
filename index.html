@@ -41,7 +41,7 @@
       <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onmouseenter="showMenu(event)" onclick="openPuzzle()">
         <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
       </button>
-      <input id="open-puzzle-input" class="hidden" type="file" accept=".json,.txt,.xw,.puz"/>
+      <input id="open-puzzle-input" class="hidden" type="file"/>
       <div id="export-menu" class="menu hidden" onmouseleave="hideMenu(event)">
         <h4>Export as:</h4>
         <button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onmouseup="setDefault(event)" onclick="writeFile('xw')">
